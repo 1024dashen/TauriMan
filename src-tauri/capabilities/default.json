@@ -3,5 +3,35 @@
     "identifier": "default",
     "description": "Capability for the main window",
     "windows": ["main"],
-    "permissions": ["core:default", "opener:default"]
+    "remote": {
+        "urls": [
+            "https://**",
+            "file://**",
+            "http://**",
+            "http://localhost:**/**",
+            "https://localhost:**/**",
+            "asset://localhost/**"
+        ]
+    },
+    "permissions": [
+        "core:default",
+        "core:app:allow-default-window-icon",
+        "core:app:allow-app-hide",
+        "core:app:allow-app-show",
+        "core:app:allow-set-app-theme",
+        "core:app:allow-name",
+        "core:window:allow-set-title",
+        "core:event:allow-emit",
+        "core:event:allow-listen",
+        "core:window:allow-unminimize",
+        "core:window:allow-set-focus",
+        "core:window:allow-show",
+        "core:window:allow-unmaximize",
+        "core:window:allow-minimize",
+        "core:window:allow-set-size",
+        "core:window:allow-toggle-maximize",
+        "core:window:allow-start-dragging",
+        "core:window:allow-close",
+        "core:window:allow-internal-toggle-maximize"
+    ]
 }
