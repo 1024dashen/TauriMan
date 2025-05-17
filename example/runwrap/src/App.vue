@@ -9,6 +9,7 @@ import {
     setTheme,
     show,
 } from '@tauri-apps/api/app'
+import { invoke } from '@tauri-apps/api/core'
 
 const init = async () => {
     // Write content to clipboard
@@ -18,6 +19,8 @@ const init = async () => {
     console.log('tauriVersion', tauriVersion)
     const name = await getName()
     console.log('name', name)
+    const startDir = await invoke('get_startup_dir')
+    console.log('startDir', startDir)
 }
 
 onMounted(() => {

@@ -1,9 +1,13 @@
+use crate::tools::comds::get_startup_dir;
 use serde_json::{json, Error};
 use tauri::{utils::config::WindowConfig, App, AppHandle, Manager, WindowEvent};
 use tauri_plugin_store::StoreExt;
 
 // handle something when start app
 pub async fn resolve_setup(app: &mut App) -> Result<(), Error> {
+    // get startup dir
+    let startup_dir = get_startup_dir();
+    println!("startup_dir: {}", startup_dir);
     let app_handle = app.handle();
     let window_json = r#"
         {
