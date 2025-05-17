@@ -14,6 +14,10 @@ const init = async () => {
     // Write content to clipboard
     const version = await getVersion()
     console.log('version', version)
+    const tauriVersion = await getTauriVersion()
+    console.log('tauriVersion', tauriVersion)
+    const name = await getName()
+    console.log('name', name)
 }
 
 onMounted(() => {

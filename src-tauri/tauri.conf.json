@@ -8,14 +8,6 @@
     },
     "app": {
         "withGlobalTauri": true,
-        "windows": [
-            {
-                "title": "tauriman",
-                "width": 800,
-                "height": 600,
-                "url": "http://localhost:5173/"
-            }
-        ],
         "security": {
             "csp": null
         }
