@@ -1,13 +1,32 @@
-use crate::tools::comds::get_startup_dir;
+use super::model::Man;
+use crate::tools::comds::{get_root_dir, load_man};
 use serde_json::{json, Error};
 use tauri::{utils::config::WindowConfig, App, AppHandle, Manager, WindowEvent};
 use tauri_plugin_store::StoreExt;
 
+pub fn show_window(app: &AppHandle) {
+    let main = app.get_webview_window("main");
+    if let Some(main) = main {
+        main.unminimize().expect("Sorry, can't unminimize window");
+        main.set_focus().expect("Sorry, can't focus window");
+    } else {
+        app.webview_windows()
+            .values()
+            .next()
+            .expect("Sorry, no window found")
+            .set_focus()
+            .expect("Can't Bring Window to Focus");
+    }
+}
+
 // handle something when start app
 pub async fn resolve_setup(app: &mut App) -> Result<(), Error> {
     // get startup dir
-    let startup_dir = get_startup_dir();
+    let startup_dir = get_root_dir();
     println!("startup_dir: {}", startup_dir);
+    let man = load_man(&startup_dir);
+    println!("man: {:?}", man);
+
     let app_handle = app.handle();
     let window_json = r#"
         {
@@ -15,11 +34,13 @@ pub async fn resolve_setup(app: &mut App) -> Result<(), Error> {
             "url": "http://localhost:5173/"
         }
     "#;
+
     let config: WindowConfig = serde_json::from_str(window_json).unwrap();
-    let window = tauri::WebviewWindowBuilder::from_config(app_handle, &config)
-        .unwrap()
-        .build()
-        .unwrap();
+    let window: tauri::WebviewWindow =
+        tauri::WebviewWindowBuilder::from_config(app_handle, &config)
+            .unwrap()
+            .build()
+            .unwrap();
 
     let store = app.store("app_data.json").unwrap();
 
@@ -117,19 +138,4 @@ pub async fn resolve_setup(app: &mut App) -> Result<(), Error> {
     window.set_focus().unwrap();
 
     Ok(())
-}
-
-pub fn show_window(app: &AppHandle) {
-    let main = app.get_webview_window("main");
-    if let Some(main) = main {
-        main.unminimize().expect("Sorry, can't unminimize window");
-        main.set_focus().expect("Sorry, can't focus window");
-    } else {
-        app.webview_windows()
-            .values()
-            .next()
-            .expect("Sorry, no window found")
-            .set_focus()
-            .expect("Can't Bring Window to Focus");
-    }
 }

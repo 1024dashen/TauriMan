@@ -4,5 +4,13 @@
     "description": "TauriMan is a tool for managing TauriMan",
     "author": "TauriMan",
     "license": "MIT",
-    "window": []
+    "window": {
+        "title": "TauriMan",
+        "url": "http://localhost:5173/",
+        "width": 960,
+        "height": 720,
+        "resizable": true,
+        "center": true,
+        "maximized": false
+    }
 }

@@ -19,8 +19,11 @@ const init = async () => {
     console.log('tauriVersion', tauriVersion)
     const name = await getName()
     console.log('name', name)
-    const startDir = await invoke('get_startup_dir')
+    const startDir = await invoke('get_root_dir')
     console.log('startDir', startDir)
+    // get man
+    const manStr = await invoke('get_man')
+    console.log('manStr---', manStr)
 }
 
 onMounted(() => {
