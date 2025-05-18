@@ -1,7 +1,11 @@
 use super::model::Man;
-use crate::tools::comds::{get_exe_dir, load_man};
+use crate::tools::{
+    comds::{get_exe_dir, get_www_dir, load_man, start_server},
+    model::ServerState,
+};
 use serde_json::{json, Error};
-use tauri::{utils::config::WindowConfig, App, AppHandle, Manager, WindowEvent};
+use std::sync::{Arc, Mutex};
+use tauri::{utils::config::WindowConfig, App, AppHandle, Manager, Url, WebviewUrl, WindowEvent};
 use tauri_plugin_store::StoreExt;
 
 pub fn show_window(app: &AppHandle) {
@@ -24,18 +28,33 @@ pub async fn resolve_setup(app: &mut App) -> Result<(), Error> {
     // get startup dir
     let startup_dir = get_exe_dir();
     println!("startup_dir: {}", startup_dir);
-    let man = load_man(&startup_dir);
-    println!("man: {:?}", man);
 
     let app_handle = app.handle();
+
     let window_json = r#"
         {
             "title": "TauriMan",
-            "url": "http://localhost:5173/"
+            "url": "index.html"
         }
     "#;
+    let mut config: WindowConfig = serde_json::from_str(window_json).unwrap();
 
-    let config: WindowConfig = serde_json::from_str(window_json).unwrap();
+    let man = load_man(&startup_dir);
+    let man_content = man.unwrap();
+    if man_content.len() > 0 {
+        let mut man_config: Man = serde_json::from_str(&man_content).unwrap();
+        println!("man: {:?}", man_config);
+        // config = man.window;
+        // 判断
+        let www_dir = get_www_dir(&startup_dir);
+        let www_dir_str = www_dir.unwrap();
+        if www_dir_str.len() > 0 {
+            println!("www_dir: {}", www_dir_str);
+            man_config.window.url = WebviewUrl::External(Url::parse(&www_dir_str).unwrap());
+        }
+        config = man_config.window;
+    }
+
     let window: tauri::WebviewWindow =
         tauri::WebviewWindowBuilder::from_config(app_handle, &config)
             .unwrap()

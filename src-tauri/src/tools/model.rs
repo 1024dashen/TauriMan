@@ -10,3 +10,7 @@ pub struct Man {
     pub license: String,
     pub window: WindowConfig,
 }
+
+pub struct ServerState {
+    pub server_handle: Option<tokio::task::JoinHandle<()>>,
+}

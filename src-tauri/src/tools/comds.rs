@@ -1,7 +1,10 @@
-use serde_json::Error;
+use super::model::ServerState;
 use std::env;
 use std::fs;
 use std::io;
+use std::net::TcpListener;
+use std::sync::{Arc, Mutex};
+use warp::Filter;
 
 // load man.json
 pub fn load_man(base_dir: &str) -> Result<String, io::Error> {
@@ -16,6 +19,78 @@ pub fn load_man(base_dir: &str) -> Result<String, io::Error> {
             // 其他类型的错误仍然返回
             Err(e)
         }
+    }
+}
+
+#[tauri::command]
+pub fn find_port() -> std::io::Result<u16> {
+    // 绑定到端口 0，让系统自动分配可用端口
+    let listener = TcpListener::bind("127.0.0.1:0")?;
+    let port = listener.local_addr()?.port();
+    Ok(port)
+}
+
+// server config www dir
+#[tauri::command]
+pub fn get_www_dir(base_dir: &str) -> Result<String, io::Error> {
+    let www_dir = format!("{}/config/www", base_dir);
+    // 判断文件夹是否存在并是否为空
+    if fs::metadata(&www_dir).is_ok() {
+        let files = fs::read_dir(&www_dir)?;
+        if files.count() > 0 {
+            let port = find_port().unwrap();
+            let route = warp::fs::dir(www_dir);
+            tokio::spawn(async move {
+                warp::serve(route).run(([127, 0, 0, 1], port)).await;
+            });
+            return Ok(format!("http://127.0.0.1:{}", port));
+        } else {
+            return Ok(String::new());
+        }
+    }
+    Ok(String::new())
+}
+
+#[tauri::command]
+pub async fn start_server(
+    state: tauri::State<'_, Arc<Mutex<ServerState>>>,
+    path: String,
+) -> Result<u16, String> {
+    println!("start_server: {}", path);
+    let mut state = state.lock().unwrap();
+    if state.server_handle.is_some() {
+        return Err("Server is already running".into());
+    }
+    let path_clone = path.clone();
+    let port = find_port().unwrap();
+    println!("port: {}", port);
+    let server_handle = tokio::spawn(async move {
+        let route = warp::fs::dir(path_clone)
+            .map(|reply| {
+                warp::reply::with_header(
+                    reply,
+                    "Cache-Control",
+                    "no-store, no-cache, must-revalidate, max-age=0",
+                )
+            })
+            .map(|reply| warp::reply::with_header(reply, "Vary", "*"))
+            .map(|reply| warp::reply::with_header(reply, "Surrogate-Control", "no-store"))
+            .map(|reply| warp::reply::with_header(reply, "Pragma", "no-cache"))
+            .map(|reply| warp::reply::with_header(reply, "Expires", "0"));
+        warp::serve(route).run(([127, 0, 0, 1], port)).await;
+    });
+    state.server_handle = Some(server_handle);
+    Ok(port)
+}
+
+#[tauri::command]
+pub async fn stop_server(state: tauri::State<'_, Arc<Mutex<ServerState>>>) -> Result<(), String> {
+    let mut state = state.lock().unwrap();
+    if let Some(handle) = state.server_handle.take() {
+        handle.abort();
+        Ok(())
+    } else {
+        Err("Server is not running".into())
     }
 }
 

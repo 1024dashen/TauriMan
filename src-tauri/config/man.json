@@ -6,7 +6,7 @@
     "license": "MIT",
     "window": {
         "title": "TauriMan",
-        "url": "http://localhost:5173/",
+        "url": "https://juejin.cn/",
         "width": 960,
         "height": 720,
         "resizable": true,
