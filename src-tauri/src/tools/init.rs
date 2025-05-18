@@ -1,10 +1,6 @@
 use super::model::Man;
-use crate::tools::{
-    comds::{get_exe_dir, get_www_dir, load_man, start_server},
-    model::ServerState,
-};
+use crate::tools::comds::{get_exe_dir, get_www_dir, load_man};
 use serde_json::{json, Error};
-use std::sync::{Arc, Mutex};
 use tauri::{utils::config::WindowConfig, App, AppHandle, Manager, Url, WebviewUrl, WindowEvent};
 use tauri_plugin_store::StoreExt;
 
@@ -44,8 +40,6 @@ pub async fn resolve_setup(app: &mut App) -> Result<(), Error> {
     if man_content.len() > 0 {
         let mut man_config: Man = serde_json::from_str(&man_content).unwrap();
         println!("man: {:?}", man_config);
-        // config = man.window;
-        // 判断
         let www_dir = get_www_dir(&startup_dir);
         let www_dir_str = www_dir.unwrap();
         if www_dir_str.len() > 0 {
