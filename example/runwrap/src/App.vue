@@ -10,6 +10,7 @@ import {
     show,
 } from '@tauri-apps/api/app'
 import { invoke } from '@tauri-apps/api/core'
+import { Command } from '@tauri-apps/plugin-shell'
 
 const init = async () => {
     // Write content to clipboard
@@ -24,6 +25,11 @@ const init = async () => {
     // get man
     const manStr = await invoke('get_man')
     console.log('manStr---', manStr)
+    const command = Command.sidecar('bin/fnm', ['--version'])
+    const output = await command.execute()
+    console.log('command output', output)
+    console.log('out:', output.stdout)
+    console.log('err:', output.stderr)
 }
 
 onMounted(() => {

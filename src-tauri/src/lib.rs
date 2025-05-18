@@ -10,6 +10,7 @@ pub fn run() {
         })))
         .plugin(tauri_plugin_store::Builder::new().build())
         .plugin(tauri_plugin_opener::init())
+        .plugin(tauri_plugin_shell::init())
         .invoke_handler(tauri::generate_handler![
             tools::comds::get_exe_dir,
             tools::comds::get_man,
