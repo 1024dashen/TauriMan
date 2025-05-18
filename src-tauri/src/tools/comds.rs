@@ -3,12 +3,15 @@ use std::env;
 use std::fs;
 use std::io;
 use std::net::TcpListener;
+use std::path::PathBuf;
 use std::sync::{Arc, Mutex};
 use warp::Filter;
 
 // load man.json
 pub fn load_man(base_dir: &str) -> Result<String, io::Error> {
-    let man_path = format!("{}/config/man.json", base_dir);
+    let mut man_path = PathBuf::from(base_dir);
+    man_path.push("config");
+    man_path.push("man.json");
     match fs::read_to_string(&man_path) {
         Ok(man_json) => Ok(man_json),
         Err(e) if e.kind() == io::ErrorKind::NotFound => {
@@ -33,7 +36,9 @@ pub fn find_port() -> std::io::Result<u16> {
 // server config www dir
 #[tauri::command]
 pub fn get_www_dir(base_dir: &str) -> Result<String, io::Error> {
-    let www_dir = format!("{}/config/www", base_dir);
+    let mut www_dir = PathBuf::from(base_dir);
+    www_dir.push("config");
+    www_dir.push("www");
     // 判断文件夹是否存在并是否为空
     if fs::metadata(&www_dir).is_ok() {
         let files = fs::read_dir(&www_dir)?;
