@@ -1,5 +1,5 @@
 use super::model::Man;
-use crate::tools::comds::{get_root_dir, load_man};
+use crate::tools::comds::{get_exe_dir, load_man};
 use serde_json::{json, Error};
 use tauri::{utils::config::WindowConfig, App, AppHandle, Manager, WindowEvent};
 use tauri_plugin_store::StoreExt;
@@ -22,7 +22,7 @@ pub fn show_window(app: &AppHandle) {
 // handle something when start app
 pub async fn resolve_setup(app: &mut App) -> Result<(), Error> {
     // get startup dir
-    let startup_dir = get_root_dir();
+    let startup_dir = get_exe_dir();
     println!("startup_dir: {}", startup_dir);
     let man = load_man(&startup_dir);
     println!("man: {:?}", man);

@@ -20,12 +20,14 @@ pub fn load_man(base_dir: &str) -> Result<String, io::Error> {
 }
 
 #[tauri::command]
-pub fn get_root_dir() -> String {
-    env::current_dir().unwrap().to_str().unwrap().to_string()
+pub fn get_exe_dir() -> String {
+    let exe_path = env::current_exe().unwrap(); // 获取当前可执行文件路径
+    let exe_dir = exe_path.parent().unwrap();
+    exe_dir.to_str().unwrap().to_string()
 }
 
 #[tauri::command]
 pub fn get_man() -> String {
-    let man = load_man(&get_root_dir()).unwrap();
+    let man = load_man(&get_exe_dir()).unwrap();
     man
 }
