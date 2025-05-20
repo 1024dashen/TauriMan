@@ -111,7 +111,8 @@ pub async fn stop_server(state: tauri::State<'_, Arc<Mutex<ServerState>>>) -> Re
 
 #[tauri::command]
 pub fn get_exe_dir() -> String {
-    let exe_path = env::current_exe().unwrap(); // 获取当前可执行文件路径
+    // 获取当前可执行文件路径
+    let exe_path = env::current_exe().unwrap();
     let exe_dir = exe_path.parent().unwrap();
     exe_dir.to_str().unwrap().to_string()
 }
