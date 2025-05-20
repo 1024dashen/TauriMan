@@ -6,6 +6,8 @@ use std::net::TcpListener;
 use std::path::PathBuf;
 use std::sync::{Arc, Mutex};
 use warp::Filter;
+use machine_uid;
+
 
 // load man.json
 pub fn load_man(base_dir: &str) -> Result<String, io::Error> {
@@ -26,11 +28,19 @@ pub fn load_man(base_dir: &str) -> Result<String, io::Error> {
 }
 
 #[tauri::command]
-pub fn find_port() -> std::io::Result<u16> {
+pub fn find_port() -> Result<u16, String> {
     // 绑定到端口 0，让系统自动分配可用端口
-    let listener = TcpListener::bind("127.0.0.1:0")?;
-    let port = listener.local_addr()?.port();
+    let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+    let port = listener.local_addr().unwrap().port();
     Ok(port)
+}
+
+// get machine uid
+#[tauri::command]
+pub fn get_machine_uid() -> String {
+    let uid: String = machine_uid::get().unwrap();
+    println!("{}", uid);
+    uid
 }
 
 // server config www dir

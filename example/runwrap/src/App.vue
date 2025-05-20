@@ -30,6 +30,9 @@ const init = async () => {
     console.log('command output', output)
     console.log('out:', output.stdout)
     console.log('err:', output.stderr)
+    // get machine uid
+    const machineUid = await invoke('get_machine_uid')
+    console.log('machineUid', machineUid)
 }
 
 onMounted(() => {

@@ -14,6 +14,8 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             tools::comds::get_exe_dir,
             tools::comds::get_man,
+            tools::comds::get_machine_uid,
+            tools::comds::find_port,
         ])
         .setup(|app| {
             tauri::async_runtime::block_on(async move {
