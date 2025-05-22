@@ -11,6 +11,8 @@ import {
 } from '@tauri-apps/api/app'
 import { invoke } from '@tauri-apps/api/core'
 import { Command } from '@tauri-apps/plugin-shell'
+import { open } from '@tauri-apps/plugin-dialog'
+import { readDirRecursively } from './utils/common'
 
 const init = async () => {
     // Write content to clipboard
@@ -35,6 +37,18 @@ const init = async () => {
     console.log('machineUid', machineUid)
 }
 
+const openDialog = async () => {
+    const file = await open({
+        multiple: false,
+        directory: true,
+    })
+    console.log('file', file)
+    if (file) {
+        const fileList = await readDirRecursively(file)
+        console.log('fileList', fileList)
+    }
+}
+
 onMounted(() => {
     init()
 })
@@ -48,6 +62,7 @@ onMounted(() => {
         <a href="https://vuejs.org/" target="_blank">
             <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
         </a>
+        <button @click="openDialog">Open Dialog</button>
     </div>
 </template>
 
