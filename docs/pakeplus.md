@@ -3,8 +3,8 @@
 ![](https://self.pakeplus.com/hado2.jpg)
 
 我是前端开发工程师，我的电脑配置：macbook air m3 8G 256G  
-可是老大让我开发 windows 软件？OK，我装了 Parallels Desktop + windows11，学了 flutter，配置了 dart + c++ + vs studio 环境，安装了 Android Studio 开发工具，硬盘-100G。  
-过了一个月，老大让我开发 ipad + iwatch 程序？OK，安装了 xcode，配置了 ios 模拟器 + iwatch 模拟器，学习了 swiftui，硬盘-128G。  
+可是老大让我开发 windows 软件？OK，我装了 Parallels Desktop + windows11，学了 flutter，配置了 dart + vs studio + c++环境，安装了 Android Studio 开发工具，硬盘-100G。  
+过了一个月，老大让我开发 iphone + iwatch 程序？OK，安装了 xcode，配置了 ios + iwatch 模拟器，学习了 swiftui，硬盘-128G。  
 一个月后，老大又让我将我们的 crm 系统做成跨平台应用？OK，我开始学习调研 Electron+tauri+Pake 等。  
 一个月后，老大又让我用 Cocos 开发抖音直播小游戏？OK，我装了抖音开发者工具，安装了 CocosDashBoard + 直播伴侣 + vs studio 环境 + python + Pycharm，然而使用 Cocos 打包 windows 一直报错，无奈只能打包为 html+js，然后使用 tauri 包裹一下。  
 可是突然某一天我意识到了哪里不对劲，我应聘的是前端开发工程师啊！而且为啥我的微信提示：硬盘空间不足？啊啊啊啊啊，硬盘只剩 300M 不到......
@@ -27,7 +27,7 @@
 
 ## 一、PakePlus 诞生
 
-没办法了，只能我自己出手了，我会 tauri + js + github + python + rust + kotlin + swiftui 等，而打包只是需要一个环境而已，我之前的 tauri 项目依托在 github 服务器上不是就可以打包？那我为什么非要在本地安装 tauri 依赖呢？我的 ios 项目也可以依赖 github 来打包吗？那 android 项目肯定也可以吧？整个过程可以实现自动化化吗？带着这些疑问，我做了一个最小化 demo 验证，完全可行！在这里还要非常感谢 github 提供的服务器，真的是太方便了！（美酒虽好，但是不可贪杯，小心闯祸，后文会讲）。  
+没办法了，只能我自己出手了，我会 tauri + js + github + python + rust + kotlin + swiftui + flutter 等，而打包只是需要一个环境而已，我之前的 tauri 项目依托在 github 服务器上不是就可以打包？那我为什么非要在本地安装 tauri 依赖呢？我的 ios 项目也可以依赖 github 来打包吗？那 android 项目肯定也可以吧？整个过程可以实现自动化化吗？带着这些疑问，我做了一个最小化 demo 验证，完全可行！在这里还要非常感谢 github 提供的服务器，真的是太方便了！（美酒虽好，但是不可贪杯，小心闯祸，后文会讲）。  
 PakePLus 只需要几分钟，不需要配置任何依赖环境，就可以将你的 web 项目打包成 Windows、Linux、MacOS 和 Android、iOS 等平台的应用程序，并且体积仅为 5MB。
 
 ![PakePlus](https://self.pakeplus.com/p1.jpg)
@@ -99,7 +99,7 @@ struct WebView: UIViewRepresentable {
 
 ### 架构优化
 
-![](https://self.pakeplus.com/github7.png)
+![](https://self.pakeplus.com/pp13.png)
 
 最初 PakePLus 的打包流程是依靠自身 main 分支来打包，新项目也基于此分支进行编辑修改，然后使用 github action 打包发布，但是这实在是太绕了，相当于无限套娃一样，我自己都被绕晕了...后来赶上 tauri2 发布，我也重新整理了架构流程，并且考虑了移动端支持的逻辑，现在的打包流程已经非常清晰，所有用户填入 github token 之后，都会默认 fork 一份 PakePLus 仓库，并包含所有分支，然后用户在自己的仓库中进行创建项目并编辑修改，并根据是 web/dist/中文名称等逻辑，使用自动化脚本自由完成项目配置，最后触发 github action 进行打包发布。
 
@@ -121,15 +121,15 @@ const main = async () => {
 }
 
 // run
-try {
-    ;(async () => {
+;(async () => {
+    try {
         console.log('🚀 worker start')
         await main()
         console.log('🚀 worker end')
-    })()
-} catch (error) {
-    console.error('❌ Worker Error:', error)
-}
+    } catch (error) {
+        console.error('❌ Worker Error:', error)
+    }
+})()
 ```
 
 当然现在的 PakePLus 还有很多不足，还处于快速迭代升级阶段，后续会继续优化升级，并且会支持更多的功能，比如：本地打包，摆脱 github 环境，秒级打包，支持所有 tauri2 api 以及自定义 api 等。
@@ -181,6 +181,8 @@ HelloGithub 站长也非常热心的帮我，我真的非常感动，说实在�
 
 感恩我的 HelloGithub 朋友，虽然我并不知道你的名字，也不知道你家住何方，更没有利益关系，但是我知道，没有你我就不会这么快被 github 解封，没有你，就不会带给 PakePLus 这么大的流量，没有你，开源背后的热情与故事就不会被传递。
 
-感谢我的日本同事常总，没有你，我将不会那么快通过 github 的手机验证，我的好朋友，有你们真好。
+感谢我的日本同事常总，没有你，我将不会那么快通过 github 的手机验证。
 
 感谢阮一峰技术周刊：感谢阮一峰的技术周刊推荐，虽然我没接住这波破天的流量(被推荐期间正被 github 封禁)
+
+我的朋友，有你们在真好！
