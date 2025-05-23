@@ -96,8 +96,8 @@ jobs:
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               with:
-                  tagName: 'PakePlus-v__VERSION__'
-                  releaseName: 'PakePlus v__VERSION__'
+                  tagName: 'TauriMan-v__VERSION__'
+                  releaseName: 'TauriMan v__VERSION__'
                   body_path: ./Note.md
                   releaseDraft: true
                   prerelease: false
