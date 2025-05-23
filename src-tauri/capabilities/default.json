@@ -52,8 +52,21 @@
         "fs:allow-app-read",
         "fs:allow-app-read-recursive",
         "fs:allow-app-write-recursive",
+        "fs:allow-appcache-read-recursive",
+        "fs:allow-appcache-read",
         "fs:allow-appcache-write",
         "fs:allow-appcache-write-recursive",
+        "fs:allow-appcache-meta-recursive",
+        "fs:allow-appcache-meta",
+        "fs:scope-appcache-recursive",
+        "fs:scope-appcache",
+        "fs:scope-appcache-index",
+        "fs:allow-appconfig-read-recursive",
+        "fs:allow-appconfig-read",
+        "fs:allow-cache-read",
+        "fs:allow-cache-write",
+        "fs:allow-cache-meta-recursive",
+        "fs:allow-cache-meta",
         "fs:allow-appconfig-write",
         "fs:allow-appconfig-write-recursive",
         "fs:allow-appdata-write",
@@ -62,6 +75,34 @@
         "autostart:allow-disable",
         "autostart:allow-is-enabled",
         "cli:default",
+        "clipboard-manager:allow-clear",
+        "clipboard-manager:allow-read-text",
+        "clipboard-manager:allow-write-text",
+        "clipboard-manager:allow-read-image",
+        "clipboard-manager:allow-write-image",
+        "clipboard-manager:allow-write-html",
+        "notification:default",
+        "os:default",
+        "process:default",
+        "sql:default",
+        "sql:allow-execute",
+        {
+            "identifier": "opener:allow-open-path",
+            "allow": [
+                {
+                    "path": "/path/to/file"
+                },
+                {
+                    "path": "$APPDATA/file"
+                },
+                {
+                    "url": "https://tauri.app"
+                },
+                {
+                    "url": "custom:*"
+                }
+            ]
+        },
         {
             "identifier": "shell:allow-execute",
             "allow": [
