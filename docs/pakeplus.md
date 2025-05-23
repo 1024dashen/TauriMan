@@ -1,9 +1,8 @@
 # 5MB 取代 Electron，轻松快速构建多端应用
 
-![](https://self.pakeplus.com/hado2.jpg)
-
 我是前端开发工程师，我的电脑配置：macbook air m3 8G 256G  
-可是老大让我开发 windows 软件？OK，我装了 Parallels Desktop + windows11，学了 flutter，配置了 dart + vs studio + c++环境，安装了 Android Studio 开发工具，硬盘-100G。  
+我在公司从0到1开发了crm系统(react)，小程序(uniapp)，还有游戏控制台(vue)等项目  
+可是某一天老大让我开发 windows 软件？OK，我装了 Parallels Desktop + windows11，学了 flutter，配置了 dart + vs studio + c++环境，安装了 Android Studio 开发工具，硬盘-100G。  
 过了一个月，老大让我开发 iphone + iwatch 程序？OK，安装了 xcode，配置了 ios + iwatch 模拟器，学习了 swiftui，硬盘-128G。  
 一个月后，老大又让我将我们的 crm 系统做成跨平台应用？OK，我开始学习调研 Electron+tauri+Pake 等。  
 一个月后，老大又让我用 Cocos 开发抖音直播小游戏？OK，我装了抖音开发者工具，安装了 CocosDashBoard + 直播伴侣 + vs studio 环境 + python + Pycharm，然而使用 Cocos 打包 windows 一直报错，无奈只能打包为 html+js，然后使用 tauri 包裹一下。  
@@ -27,7 +26,7 @@
 
 ## 一、PakePlus 诞生
 
-没办法了，只能我自己出手了，我会 tauri + js + github + python + rust + kotlin + swiftui + flutter 等，而打包只是需要一个环境而已，我之前的 tauri 项目依托在 github 服务器上不是就可以打包？那我为什么非要在本地安装 tauri 依赖呢？我的 ios 项目也可以依赖 github 来打包吗？那 android 项目肯定也可以吧？整个过程可以实现自动化化吗？带着这些疑问，我做了一个最小化 demo 验证，完全可行！在这里还要非常感谢 github 提供的服务器，真的是太方便了！（美酒虽好，但是不可贪杯，小心闯祸，后文会讲）。  
+没办法了，只能我自己出手了，我会 tauri + js + github + python + rust + kotlin + swiftui + flutter 等，并参考Pake项目打包流程，其实打包核心只是需要一个环境而已，我之前的 tauri 项目依托在 github 服务器上不是就可以打包？那我为什么非要在本地安装 tauri 依赖呢？我的 ios 项目也可以依赖 github 来打包吗？那 android 项目肯定也可以吧？整个过程可以实现自动化化吗？带着这些疑问，我做了一个最小化 demo 验证，完全可行！在这里还要非常感谢 github 提供的服务器，真的是太方便了！（美酒虽好，但是不可贪杯，小心闯祸，后文会讲）。  
 PakePLus 只需要几分钟，不需要配置任何依赖环境，就可以将你的 web 项目打包成 Windows、Linux、MacOS 和 Android、iOS 等平台的应用程序，并且体积仅为 5MB。
 
 ![PakePlus](https://self.pakeplus.com/p1.jpg)
