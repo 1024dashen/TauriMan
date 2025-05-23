@@ -43,7 +43,8 @@ pub fn run() {
                 .handle()
                 .plugin(tauri_plugin_updater::Builder::new().build());
             #[cfg(desktop)]
-            app.handle()
+            let _ = app
+                .handle()
                 .plugin(tauri_plugin_window_state::Builder::default().build());
             #[cfg(desktop)]
             let _ = app
