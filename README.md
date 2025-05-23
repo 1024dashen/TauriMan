@@ -2,6 +2,9 @@
 
 This template should help get you started developing with Tauri in vanilla HTML, CSS and Javascript.
 
+为什么不能和PakePlus集成？
+因为PakePLus本身包含了PP的ui内容，如果合在一起，会导致新的项目存在多余的PP内容，导致包体积过大，和性能下降。
+
 ## Recommended IDE Setup
 
 -   [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)

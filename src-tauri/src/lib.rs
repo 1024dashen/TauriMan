@@ -20,6 +20,10 @@ pub fn run() {
             tools::comds::find_port,
         ])
         .setup(|app| {
+            #[cfg(desktop)]
+            app.handle().plugin(tauri_plugin_autostart::init(tauri_plugin_autostart::MacosLauncher::LaunchAgent, Some(vec!["--flag1", "--flag2"])));
+            #[cfg(desktop)]
+            app.handle().plugin(tauri_plugin_cli::init());
             tauri::async_runtime::block_on(async move {
                 let _ = tools::init::resolve_setup(app).await;
             });

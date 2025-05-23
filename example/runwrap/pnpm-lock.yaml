@@ -8,6 +8,12 @@ dependencies:
   '@tauri-apps/api':
     specifier: ^2
     version: 2.5.0
+  '@tauri-apps/plugin-autostart':
+    specifier: ^2.3.0
+    version: 2.3.0
+  '@tauri-apps/plugin-cli':
+    specifier: ^2.2.0
+    version: 2.2.0
   '@tauri-apps/plugin-clipboard-manager':
     specifier: ^2.2.2
     version: 2.2.2
@@ -610,6 +616,18 @@ packages:
       '@tauri-apps/cli-win32-ia32-msvc': 2.5.0
       '@tauri-apps/cli-win32-x64-msvc': 2.5.0
     dev: true
+
+  /@tauri-apps/plugin-autostart@2.3.0:
+    resolution: {integrity: sha512-yxQTpc4NolT1r317yjKVhrG+YwCWPBOj7p+70m/q0w1JHc53pGcHmTboAbA3kGY6PQ+9y9oE7cdmHq7PH9z/SQ==}
+    dependencies:
+      '@tauri-apps/api': 2.5.0
+    dev: false
+
+  /@tauri-apps/plugin-cli@2.2.0:
+    resolution: {integrity: sha512-rvNhMog9rHr01Xk+trBFKJ0eZICIvPkm9GX6ogB89/0hROU/lf+a/sb4vC0wtSeR7zrJuCSxwxYuvHCZheaYFA==}
+    dependencies:
+      '@tauri-apps/api': 2.5.0
+    dev: false
 
   /@tauri-apps/plugin-clipboard-manager@2.2.2:
     resolution: {integrity: sha512-bZvDLMqfcNmsw7Ag8I49jlaCjdpDvvlJHnpp6P+Gg/3xtpSERdwlDxm7cKGbs2mj46dsw4AuG3RoAgcpwgioUA==}

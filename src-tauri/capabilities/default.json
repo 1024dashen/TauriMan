@@ -58,6 +58,10 @@
         "fs:allow-appconfig-write-recursive",
         "fs:allow-appdata-write",
         "fs:allow-appdata-write-recursive",
+        "autostart:allow-enable",
+        "autostart:allow-disable",
+        "autostart:allow-is-enabled",
+        "cli:default",
         {
             "identifier": "shell:allow-execute",
             "allow": [

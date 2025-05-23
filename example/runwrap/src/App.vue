@@ -9,6 +9,8 @@ import {
     setTheme,
     show,
 } from '@tauri-apps/api/app'
+import { enable, isEnabled, disable } from '@tauri-apps/plugin-autostart'
+import { getMatches } from '@tauri-apps/plugin-cli'
 import { invoke } from '@tauri-apps/api/core'
 import { Command } from '@tauri-apps/plugin-shell'
 import { open } from '@tauri-apps/plugin-dialog'
