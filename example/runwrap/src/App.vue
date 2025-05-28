@@ -50,7 +50,7 @@
                         align="center"
                     />
                     <el-table-column prop="name" label="文件名" />
-                    <el-table-column prop="size" label="文件体积" width="90" />
+                    <el-table-column prop="size" label="文件体积(k)" width="100" />
                     <el-table-column
                         prop="update"
                         label="最近修改时间"
@@ -165,7 +165,7 @@ onMounted(() => {
         tableData.value.push({
             index: i,
             name: '文件' + i,
-            size: '100KB',
+            size: '100000',
             update: '2021-01-01 12:00',
             action: '执行',
             state: '等待',
