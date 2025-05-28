@@ -135,10 +135,20 @@ const selectDir = (type: string) => {
         console.log('选择文件夹', res)
         if (type === 'input') {
             inputDir.value = res || ''
+            res && readDir(res)
         } else {
             outputDir.value = res || ''
         }
     })
+}
+
+// 读取文件夹
+const readDir = async (dir: string) => {
+    console.log('读取文件夹', dir)
+    const res = await invoke('read_dir', {
+        path: dir,
+    })
+    console.log('读取文件夹结果', res)
 }
 
 // 打开文件夹

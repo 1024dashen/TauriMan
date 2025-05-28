@@ -14,3 +14,11 @@ pub struct Man {
 pub struct ServerState {
     pub server_handle: Option<tokio::task::JoinHandle<()>>,
 }
+
+#[derive(Serialize)]
+pub struct FileInfo {
+    pub name: String,
+    pub size: u64,
+    pub modified: u64, // 时间戳
+    pub is_dir: bool,
+}

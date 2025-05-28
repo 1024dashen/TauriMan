@@ -19,6 +19,7 @@ pub fn run() {
             tools::comds::get_machine_uid,
             tools::comds::find_port,
             tools::comds::open_folder,
+            tools::comds::read_dir,
         ])
         .setup(|app| {
             tauri::async_runtime::block_on(async move {

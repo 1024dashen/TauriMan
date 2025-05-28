@@ -7,6 +7,8 @@ use std::net::TcpListener;
 use std::path::PathBuf;
 use std::sync::{Arc, Mutex};
 use warp::Filter;
+use std::time::UNIX_EPOCH;
+use super::model::FileInfo;
 
 // load man.json
 pub fn load_man(base_dir: &str) -> Result<String, io::Error> {
@@ -24,6 +26,31 @@ pub fn load_man(base_dir: &str) -> Result<String, io::Error> {
             Err(e)
         }
     }
+}
+
+#[tauri::command]
+pub fn read_dir(path: String) -> Result<Vec<FileInfo>, String> {
+    let entries = fs::read_dir(path).map_err(|e| e.to_string())?;
+    let mut files = Vec::new();
+    for entry in entries {
+        let entry = entry.map_err(|e| e.to_string())?;
+        let metadata = entry.metadata().map_err(|e| e.to_string())?;
+
+        let modified = metadata
+            .modified()
+            .map_err(|e| e.to_string())?
+            .duration_since(UNIX_EPOCH)
+            .map_err(|e| e.to_string())?
+            .as_secs();
+
+        files.push(FileInfo {
+            name: entry.file_name().to_string_lossy().into_owned(),
+            size: metadata.len(),
+            modified,
+            is_dir: metadata.is_dir(),
+        });
+    }
+    Ok(files)
 }
 
 #[tauri::command]
