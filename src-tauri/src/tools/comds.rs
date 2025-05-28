@@ -1,4 +1,5 @@
 use super::model::ServerState;
+use machine_uid;
 use std::env;
 use std::fs;
 use std::io;
@@ -6,8 +7,6 @@ use std::net::TcpListener;
 use std::path::PathBuf;
 use std::sync::{Arc, Mutex};
 use warp::Filter;
-use machine_uid;
-
 
 // load man.json
 pub fn load_man(base_dir: &str) -> Result<String, io::Error> {
@@ -25,6 +24,21 @@ pub fn load_man(base_dir: &str) -> Result<String, io::Error> {
             Err(e)
         }
     }
+}
+
+#[tauri::command]
+pub fn open_folder(path: String) -> Result<(), String> {
+    #[cfg(target_os = "macos")]
+    let command = "open";
+    #[cfg(target_os = "windows")]
+    let command = "explorer";
+    #[cfg(target_os = "linux")]
+    let command = "xdg-open";
+    std::process::Command::new(command)
+        .arg(&path)
+        .spawn()
+        .map_err(|e| e.to_string())?;
+    Ok(())
 }
 
 #[tauri::command]

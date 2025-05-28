@@ -4,14 +4,30 @@
         <div class="header">
             <div class="headerLeft">
                 <div class="inputBox">
-                    <el-button class="inputBtn">输入文件夹</el-button>
-                    <el-input class="inputDir" placeholder="" />
-                    <span class="checkBtn">查看</span>
+                    <el-button class="inputBtn" @click="selectDir('input')">
+                        输入文件夹
+                    </el-button>
+                    <el-input
+                        v-model="inputDir"
+                        class="inputDir"
+                        placeholder=""
+                    />
+                    <span class="checkBtn" @click="openDir(inputDir)">
+                        查看
+                    </span>
                 </div>
                 <div class="inputBox">
-                    <el-button class="inputBtn">输出文件夹</el-button>
-                    <el-input class="inputDir" placeholder="" />
-                    <span class="checkBtn">查看</span>
+                    <el-button class="inputBtn" @click="selectDir('output')">
+                        输出文件夹
+                    </el-button>
+                    <el-input
+                        v-model="outputDir"
+                        class="inputDir"
+                        placeholder=""
+                    />
+                    <span class="checkBtn" @click="openDir(outputDir)">
+                        查看
+                    </span>
                 </div>
             </div>
             <div class="headerRight">
@@ -81,7 +97,7 @@
                         align="center"
                     >
                         <template #default="scope">
-                            <el-button>
+                            <el-button type="danger" plain>
                                 <el-icon><Delete /></el-icon>
                             </el-button>
                         </template>
@@ -103,8 +119,35 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
+import { open } from '@tauri-apps/plugin-dialog'
+import { invoke } from '@tauri-apps/api/core'
+
+const inputDir = ref('')
+const outputDir = ref('')
 
 const tableData = ref<any[]>([])
+
+// 选择文件夹
+const selectDir = (type: string) => {
+    open({
+        directory: true,
+    }).then((res) => {
+        console.log('选择文件夹', res)
+        if (type === 'input') {
+            inputDir.value = res || ''
+        } else {
+            outputDir.value = res || ''
+        }
+    })
+}
+
+// 打开文件夹
+const openDir = (dir: string) => {
+    console.log('打开文件夹', dir)
+    invoke('open_folder', {
+        path: dir,
+    })
+}
 
 onMounted(() => {
     console.log('mounted')
@@ -163,7 +206,7 @@ onMounted(() => {
                 .checkBtn {
                     color: #409eff;
                     cursor: pointer;
-                    text-decoration: underline;
+                    // text-decoration: underline;
                 }
             }
         }
@@ -198,6 +241,10 @@ onMounted(() => {
 
                 .actionIcon {
                     color: #409eff;
+                }
+
+                .deleted {
+                    color: #f56c6c;
                 }
             }
         }
