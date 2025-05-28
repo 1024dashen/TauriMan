@@ -1,82 +1,218 @@
-<script setup lang="ts">
-import { onMounted } from 'vue'
-import {
-    defaultWindowIcon,
-    getName,
-    getTauriVersion,
-    getVersion,
-    hide,
-    setTheme,
-    show,
-} from '@tauri-apps/api/app'
-import { invoke } from '@tauri-apps/api/core'
-import { Command } from '@tauri-apps/plugin-shell'
-import { open } from '@tauri-apps/plugin-dialog'
-import { readDirRecursively } from './utils/common'
-
-const init = async () => {
-    // Write content to clipboard
-    const version = await getVersion()
-    console.log('version', version)
-    const tauriVersion = await getTauriVersion()
-    console.log('tauriVersion', tauriVersion)
-    const name = await getName()
-    console.log('name', name)
-    const startDir = await invoke('get_exe_dir')
-    console.log('startDir', startDir)
-    // get man
-    const manStr = await invoke('get_man')
-    console.log('manStr---', manStr)
-    const command = Command.sidecar('bin/fnm', ['--version'])
-    const output = await command.execute()
-    console.log('command output', output)
-    console.log('out:', output.stdout)
-    console.log('err:', output.stderr)
-    // get machine uid
-    const machineUid = await invoke('get_machine_uid')
-    console.log('machineUid', machineUid)
-}
-
-const openDialog = async () => {
-    const file = await open({
-        multiple: false,
-        directory: true,
-    })
-    console.log('file', file)
-    if (file) {
-        const fileList = await readDirRecursively(file)
-        console.log('fileList', fileList)
-    }
-}
-
-onMounted(() => {
-    init()
-})
-</script>
-
 <template>
-    <div>
-        <a href="https://vite.dev" target="_blank">
-            <img src="/vite.svg" class="logo" alt="Vite logo" />
-        </a>
-        <a href="https://vuejs.org/" target="_blank">
-            <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-        </a>
-        <button @click="openDialog">Open Dialog</button>
+    <div class="container">
+        <!-- header -->
+        <div class="header">
+            <div class="headerLeft">
+                <div class="inputBox">
+                    <el-button class="inputBtn">输入文件夹</el-button>
+                    <el-input class="inputDir" placeholder="" />
+                    <span class="checkBtn">查看</span>
+                </div>
+                <div class="inputBox">
+                    <el-button class="inputBtn">输出文件夹</el-button>
+                    <el-input class="inputDir" placeholder="" />
+                    <span class="checkBtn">查看</span>
+                </div>
+            </div>
+            <div class="headerRight">
+                <el-button class="batchBtn">批量执行</el-button>
+            </div>
+        </div>
+        <!-- content -->
+        <div class="content">
+            <div class="contentLeft">
+                <el-table
+                    :data="tableData"
+                    height="100%"
+                    border
+                    class="tableBox"
+                >
+                    <el-table-column
+                        prop="index"
+                        label="序号"
+                        width="60"
+                        align="center"
+                    />
+                    <el-table-column prop="name" label="文件名" />
+                    <el-table-column prop="size" label="文件体积" width="90" />
+                    <el-table-column
+                        prop="update"
+                        label="最近修改时间"
+                        width="140"
+                    />
+                    <el-table-column
+                        prop="action"
+                        label="执行"
+                        width="80"
+                        align="center"
+                    >
+                        <template #default="scope">
+                            <el-button>
+                                <el-icon class="actionIcon" size="20">
+                                    <CaretRight />
+                                </el-icon>
+                            </el-button>
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                        prop="state"
+                        label="状态"
+                        width="60"
+                        align="center"
+                    >
+                        <template #default="scope"> 等待 </template>
+                    </el-table-column>
+                    <el-table-column
+                        prop="record"
+                        label="记录"
+                        width="80"
+                        align="center"
+                    >
+                        <template #default="scope">
+                            <el-button>
+                                <el-icon><Document /></el-icon>
+                            </el-button>
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                        prop="delete"
+                        label="删除"
+                        width="80"
+                        align="center"
+                    >
+                        <template #default="scope">
+                            <el-button>
+                                <el-icon><Delete /></el-icon>
+                            </el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </div>
+            <div class="contentRight">
+                <div
+                    v-for="item in tableData"
+                    :key="item.index"
+                    class="logItem"
+                >
+                    这是日志数据，暂时是假数据，包含输入文件夹、输出文件夹、文件列表展示以及批量执行功能。
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
-<style scoped>
-.logo {
-    height: 6em;
-    padding: 1.5em;
-    will-change: filter;
-    transition: filter 300ms;
-}
-.logo:hover {
-    filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-    filter: drop-shadow(0 0 2em #42b883aa);
+<script setup lang="ts">
+import { onMounted, ref } from 'vue'
+
+const tableData = ref<any[]>([])
+
+onMounted(() => {
+    console.log('mounted')
+    for (let i = 0; i < 50; i++) {
+        tableData.value.push({
+            index: i,
+            name: '文件' + i,
+            size: '100KB',
+            update: '2021-01-01 12:00',
+            action: '执行',
+            state: '等待',
+            record: '记录',
+            delete: '删除',
+        })
+    }
+})
+</script>
+
+<style scoped lang="scss">
+.container {
+    width: 100%;
+    height: 100%;
+    background-color: #f0f2f5;
+    display: flex;
+    flex-direction: column;
+
+    .header {
+        height: 50px;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px;
+        gap: 20px;
+
+        .headerLeft {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex: 1;
+
+            .inputBtn {
+                width: 160px;
+            }
+
+            .inputBox {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                gap: 10px;
+
+                .inputDir {
+                    flex: 1;
+                }
+
+                .checkBtn {
+                    color: #409eff;
+                    cursor: pointer;
+                    text-decoration: underline;
+                }
+            }
+        }
+
+        .headerRight {
+            width: 300px;
+            height: 100%;
+
+            .batchBtn {
+                width: 100%;
+                height: 100%;
+            }
+        }
+    }
+
+    .content {
+        flex: 1;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 0 20px 20px 20px;
+        gap: 20px;
+        overflow: scroll;
+
+        .contentLeft {
+            flex: 1;
+            width: 100%;
+            overflow-y: scroll;
+
+            .tableBox {
+                overflow: scroll;
+
+                .actionIcon {
+                    color: #409eff;
+                }
+            }
+        }
+
+        .contentRight {
+            width: 300px;
+            border: 1px solid rgb(223, 223, 223);
+            border-radius: 10px;
+            overflow-y: scroll;
+
+            .logItem {
+                color: gray;
+                margin: 10px;
+            }
+        }
+    }
 }
 </style>
