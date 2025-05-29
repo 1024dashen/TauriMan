@@ -50,7 +50,11 @@
                         align="center"
                     />
                     <el-table-column prop="name" label="文件名" />
-                    <el-table-column prop="size" label="文件体积(k)" width="100" />
+                    <el-table-column
+                        prop="size"
+                        label="文件体积(k)"
+                        width="100"
+                    />
                     <el-table-column
                         prop="update"
                         label="最近修改时间"
@@ -121,6 +125,7 @@
 import { onMounted, ref } from 'vue'
 import { open } from '@tauri-apps/plugin-dialog'
 import { invoke } from '@tauri-apps/api/core'
+import { timeFormat } from './utils/common'
 
 const inputDir = ref('')
 const outputDir = ref('')
@@ -145,10 +150,16 @@ const selectDir = (type: string) => {
 // 读取文件夹
 const readDir = async (dir: string) => {
     console.log('读取文件夹', dir)
-    const res = await invoke('read_dir', {
+    const res: any = await invoke('read_dir', {
         path: dir,
     })
     console.log('读取文件夹结果', res)
+    let index = 1
+    tableData.value = res.map((item: any) => ({
+        ...item,
+        index: index++,
+        update: timeFormat(item.modified),
+    }))
 }
 
 // 打开文件夹
@@ -158,21 +169,8 @@ const openDir = (dir: string) => {
         path: dir,
     })
 }
-
 onMounted(() => {
     console.log('mounted')
-    for (let i = 0; i < 50; i++) {
-        tableData.value.push({
-            index: i,
-            name: '文件' + i,
-            size: '100000',
-            update: '2021-01-01 12:00',
-            action: '执行',
-            state: '等待',
-            record: '记录',
-            delete: '删除',
-        })
-    }
 })
 </script>
 
