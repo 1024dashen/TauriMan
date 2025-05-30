@@ -12,5 +12,37 @@
         "resizable": true,
         "center": true,
         "maximized": false
+    },
+    "langs": {
+        "en": {
+            "label": "English",
+            "inputPath": "Input Path",
+            "outputPath": "Output Path",
+            "start": "Start",
+            "stop": "Stop",
+            "clear": "Clear",
+            "about": "About",
+            "help": "Help"
+        },
+        "zh": {
+            "label": "中文",
+            "inputPath": "输入路径",
+            "outputPath": "输出路径",
+            "start": "开始",
+            "stop": "停止",
+            "clear": "清除",
+            "about": "关于",
+            "help": "帮助"
+        },
+        "zhTw": {
+            "label": "繁體中文",
+            "inputPath": "輸入路徑",
+            "outputPath": "輸出路徑",
+            "start": "開始",
+            "stop": "停止",
+            "clear": "清除",
+            "about": "關於",
+            "help": "幫助"
+        }
     }
 }

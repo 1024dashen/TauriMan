@@ -5,7 +5,7 @@
             <div class="headerLeft">
                 <div class="inputBox">
                     <el-button class="inputBtn" @click="selectDir('input')">
-                        输入文件夹
+                        {{ t('inputDir') }}
                     </el-button>
                     <el-input
                         v-model="inputDir"
@@ -32,6 +32,7 @@
             </div>
             <div class="headerRight">
                 <el-button class="batchBtn">批量执行</el-button>
+                <!-- <el-button class="batchBtn">选择语言</el-button> -->
             </div>
         </div>
         <!-- content -->
@@ -126,6 +127,9 @@ import { onMounted, ref } from 'vue'
 import { open } from '@tauri-apps/plugin-dialog'
 import { invoke } from '@tauri-apps/api/core'
 import { timeFormat } from './utils/common'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const inputDir = ref('')
 const outputDir = ref('')
@@ -222,6 +226,10 @@ onMounted(() => {
         .headerRight {
             width: 300px;
             height: 100%;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            gap: 10px;
 
             .batchBtn {
                 width: 100%;

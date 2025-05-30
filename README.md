@@ -8,6 +8,7 @@ This template should help get you started developing with Tauri in vanilla HTML,
 
 # Add TauriApi
 
+在前端文件夹项目中添加依赖
 ```shell
 pnpm add -D @tauri-apps/cli@latest
 
@@ -22,3 +23,8 @@ pnpm add -D @tauri-apps/cli@latest
 "@tauri-apps/plugin-updater": "^2.7.1",
 "@tauri-apps/plugin-window-state": "^2.2.1",
 ```
+
+
+# 在debug或发布目录添加config文件夹
+
+TauriMan会主动加载config文件夹下的配置文件，用于配置TauriMan的功能。
