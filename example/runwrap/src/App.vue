@@ -32,7 +32,6 @@
             </div>
             <div class="headerRight">
                 <el-button class="batchBtn">{{ t('start') }}</el-button>
-                <!-- <el-button class="batchBtn">选择语言</el-button> -->
             </div>
         </div>
         <!-- content -->
@@ -43,6 +42,7 @@
                     height="100%"
                     border
                     class="tableBox"
+                    :empty-text="t('empty')"
                 >
                     <el-table-column
                         prop="index"
@@ -60,6 +60,7 @@
                         prop="update"
                         :label="t('update')"
                         width="140"
+                        align="center"
                     />
                     <el-table-column
                         prop="action"
@@ -81,7 +82,9 @@
                         width="64"
                         align="center"
                     >
-                        <template #default="scope"> {{ t('waiting') }} </template>
+                        <template #default="scope">
+                            {{ t('waiting') }}
+                        </template>
                     </el-table-column>
                     <el-table-column
                         prop="record"

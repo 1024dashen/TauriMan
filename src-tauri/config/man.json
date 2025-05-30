@@ -6,7 +6,7 @@
     "license": "MIT",
     "window": {
         "title": "TauriMan",
-        "url": "https://juejin.cn/",
+        "url": "http://localhost:5173/",
         "width": 960,
         "height": 720,
         "resizable": true,
@@ -16,33 +16,47 @@
     "langs": {
         "en": {
             "label": "English",
-            "inputPath": "Input Path",
-            "outputPath": "Output Path",
+            "inputDir": "Input Dir",
+            "outputDir": "Output Dir",
             "start": "Start",
             "stop": "Stop",
             "clear": "Clear",
             "about": "About",
-            "help": "Help"
+            "help": "Help",
+            "check": "Check",
+            "index": "Index",
+            "name": "Name",
+            "size": "Size",
+            "update": "Update",
+            "batch": "Batch",
+            "status": "Status",
+            "success": "Success",
+            "waiting": "Waiting",
+            "delete": "Delete",
+            "record": "Record",
+            "action": "Action"
         },
-        "zh": {
+        "zh-CN": {
             "label": "中文",
-            "inputPath": "输入路径",
-            "outputPath": "输出路径",
+            "inputDir": "输入文件夹",
+            "outputDir": "输出文件夹",
             "start": "开始",
             "stop": "停止",
             "clear": "清除",
             "about": "关于",
-            "help": "帮助"
-        },
-        "zhTw": {
-            "label": "繁體中文",
-            "inputPath": "輸入路徑",
-            "outputPath": "輸出路徑",
-            "start": "開始",
-            "stop": "停止",
-            "clear": "清除",
-            "about": "關於",
-            "help": "幫助"
+            "help": "帮助",
+            "check": "查看",
+            "index": "序号",
+            "name": "文件名",
+            "size": "文件体积(k)",
+            "update": "最近修改时间",
+            "batch": "批量执行",
+            "status": "状态",
+            "success": "成功",
+            "waiting": "等待",
+            "delete": "删除",
+            "record": "记录",
+            "action": "执行"
         }
     }
 }

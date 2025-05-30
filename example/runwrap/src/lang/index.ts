@@ -31,6 +31,7 @@ let manJson: any = {
             delete: 'Delete',
             record: 'Record',
             action: 'Action',
+            empty: 'No data',
         },
         'zh-CN': {
             label: '中文',
@@ -53,6 +54,7 @@ let manJson: any = {
             delete: '删除',
             record: '记录',
             action: '执行',
+            empty: '暂无数据',
         },
     },
     window: {
@@ -67,8 +69,8 @@ let manJson: any = {
 }
 
 try {
-    // const manStr: string = await invoke('get_man')
-    // manJson = JSON.parse(manStr)
+    const manStr: string = await invoke('get_man')
+    manJson = JSON.parse(manStr)
     console.log('manJson invoke---', manJson)
 } catch (error) {
     console.error('获取man失败', error)
