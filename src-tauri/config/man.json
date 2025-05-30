@@ -34,7 +34,8 @@
             "waiting": "Waiting",
             "delete": "Delete",
             "record": "Record",
-            "action": "Action"
+            "action": "Action",
+            "empty": "No data"
         },
         "zh-CN": {
             "label": "中文",
@@ -56,7 +57,8 @@
             "waiting": "等待",
             "delete": "删除",
             "record": "记录",
-            "action": "执行"
+            "action": "执行",
+            "empty": "暂无数据"
         }
     }
 }
