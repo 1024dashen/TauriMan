@@ -13,12 +13,12 @@
                         placeholder=""
                     />
                     <span class="checkBtn" @click="openDir(inputDir)">
-                        查看
+                        {{ t('check') }}
                     </span>
                 </div>
                 <div class="inputBox">
                     <el-button class="inputBtn" @click="selectDir('output')">
-                        输出文件夹
+                        {{ t('outputDir') }}
                     </el-button>
                     <el-input
                         v-model="outputDir"
@@ -26,12 +26,12 @@
                         placeholder=""
                     />
                     <span class="checkBtn" @click="openDir(outputDir)">
-                        查看
+                        {{ t('check') }}
                     </span>
                 </div>
             </div>
             <div class="headerRight">
-                <el-button class="batchBtn">批量执行</el-button>
+                <el-button class="batchBtn">{{ t('start') }}</el-button>
                 <!-- <el-button class="batchBtn">选择语言</el-button> -->
             </div>
         </div>
@@ -46,24 +46,24 @@
                 >
                     <el-table-column
                         prop="index"
-                        label="序号"
+                        :label="t('index')"
                         width="60"
                         align="center"
                     />
-                    <el-table-column prop="name" label="文件名" />
+                    <el-table-column prop="name" :label="t('name')" />
                     <el-table-column
                         prop="size"
-                        label="文件体积(k)"
+                        :label="t('size')"
                         width="100"
                     />
                     <el-table-column
                         prop="update"
-                        label="最近修改时间"
+                        :label="t('update')"
                         width="140"
                     />
                     <el-table-column
                         prop="action"
-                        label="执行"
+                        :label="t('action')"
                         width="80"
                         align="center"
                     >
@@ -77,15 +77,15 @@
                     </el-table-column>
                     <el-table-column
                         prop="state"
-                        label="状态"
-                        width="60"
+                        :label="t('status')"
+                        width="64"
                         align="center"
                     >
-                        <template #default="scope"> 等待 </template>
+                        <template #default="scope"> {{ t('waiting') }} </template>
                     </el-table-column>
                     <el-table-column
                         prop="record"
-                        label="记录"
+                        :label="t('record')"
                         width="80"
                         align="center"
                     >
@@ -97,7 +97,7 @@
                     </el-table-column>
                     <el-table-column
                         prop="delete"
-                        label="删除"
+                        :label="t('delete')"
                         width="80"
                         align="center"
                     >
