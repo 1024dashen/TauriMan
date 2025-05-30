@@ -131,6 +131,7 @@ import { open } from '@tauri-apps/plugin-dialog'
 import { invoke } from '@tauri-apps/api/core'
 import { timeFormat } from './utils/common'
 import { useI18n } from 'vue-i18n'
+import VConsole from 'vconsole';
 
 const { t } = useI18n()
 
@@ -172,9 +173,13 @@ const readDir = async (dir: string) => {
 // 打开文件夹
 const openDir = (dir: string) => {
     console.log('打开文件夹', dir)
-    invoke('open_folder', {
-        path: dir,
-    })
+    if (dir === 'debug') {
+        const _ = new VConsole();
+    } else {
+        invoke('open_folder', {
+            path: dir,
+        })
+    }
 }
 onMounted(() => {
     console.log('mounted')
