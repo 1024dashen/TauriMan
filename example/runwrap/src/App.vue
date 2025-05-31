@@ -228,6 +228,7 @@ onMounted(() => {
                 .checkBtn {
                     color: #409eff;
                     cursor: pointer;
+                    font-size: 12px;
                     // text-decoration: underline;
                 }
             }
