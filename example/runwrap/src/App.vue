@@ -113,7 +113,7 @@
                     </el-table-column>
                 </el-table>
             </div>
-            <div class="contentRight">
+            <el-scrollbar class="contentRight" height="100%">
                 <div
                     v-for="item in tableData"
                     :key="item.index"
@@ -121,7 +121,7 @@
                 >
                     这是日志数据，暂时是假数据，包含输入文件夹、输出文件夹、文件列表展示以及批量执行功能。
                 </div>
-            </div>
+            </el-scrollbar>
         </div>
     </div>
 </template>
@@ -285,6 +285,7 @@ onMounted(() => {
             .logItem {
                 color: gray;
                 margin: 10px;
+                font-size: 12px;
             }
         }
     }
