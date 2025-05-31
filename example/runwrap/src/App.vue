@@ -43,6 +43,7 @@
                     border
                     class="tableBox"
                     :empty-text="t('empty')"
+                    scrollbar-always-on="false"
                 >
                     <el-table-column
                         prop="index"
@@ -51,11 +52,11 @@
                         align="center"
                     />
                     <el-table-column prop="name" :label="t('name')" />
-                    <el-table-column
+                    <!-- <el-table-column
                         prop="size"
                         :label="t('size')"
                         width="100"
-                    />
+                    /> -->
                     <el-table-column
                         prop="update"
                         :label="t('update')"
@@ -193,6 +194,7 @@ onMounted(() => {
     background-color: #f0f2f5;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 
     .header {
         height: 50px;
@@ -253,15 +255,16 @@ onMounted(() => {
         justify-content: space-between;
         padding: 0 20px 20px 20px;
         gap: 20px;
-        overflow: scroll;
+        overflow: hidden;
 
         .contentLeft {
             flex: 1;
             width: 100%;
-            overflow-y: scroll;
+            overflow-y: hidden;
 
             .tableBox {
-                overflow: scroll;
+                overflow: hidden;
+                // overflow-y: scroll;
 
                 .actionIcon {
                     color: #409eff;

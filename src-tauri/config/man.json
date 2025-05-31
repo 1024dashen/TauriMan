@@ -13,6 +13,7 @@
         "center": true,
         "maximized": false
     },
+    "locale": "zh-CN",
     "langs": {
         "en": {
             "label": "English",

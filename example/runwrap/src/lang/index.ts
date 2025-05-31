@@ -8,7 +8,7 @@ let manJson: any = {
     description: 'TauriMan is a tool for managing TauriMan',
     author: 'TauriMan',
     license: 'MIT',
-    locale: 'en',
+    locale: 'zh-CN',
     langs: {
         en: {
             label: 'English',
