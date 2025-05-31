@@ -280,7 +280,7 @@ onMounted(() => {
             width: 300px;
             border: 1px solid rgb(223, 223, 223);
             border-radius: 10px;
-            overflow-y: scroll;
+            // overflow-y: scroll;
 
             .logItem {
                 color: gray;
