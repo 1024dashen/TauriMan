@@ -147,6 +147,7 @@ import VConsole from 'vconsole'
 import { Command } from '@tauri-apps/plugin-shell'
 import { join } from '@tauri-apps/api/path'
 import { ElMessage } from 'element-plus'
+import i18n from '@/lang'
 
 const transLoading = ref(false)
 
@@ -285,8 +286,24 @@ const runBundleCmd = async () => {
     ElMessage.success('批量转换完成')
 }
 
+const initLang = async () => {
+    try {
+        const manStr: string = await invoke('get_man')
+        const manJson = JSON.parse(manStr)
+        console.log('manJson invoke---', manJson)
+        i18n.global.setLocaleMessage(
+            manJson.locale,
+            manJson.langs[manJson.locale]
+        )
+        i18n.global.locale.value = manJson.locale
+    } catch (error) {
+        console.error('获取man失败', error)
+    }
+}
+
 onMounted(() => {
     console.log('mounted')
+    initLang()
     inputDir.value && readDir(inputDir.value)
 })
 </script>
