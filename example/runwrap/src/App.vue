@@ -36,7 +36,7 @@
                 </div>
             </div>
             <div class="headerRight">
-                <el-button @click="runCommand" class="batchBtn">
+                <el-button @click="runBundleCmd" class="batchBtn">
                     {{ t('start') }}
                 </el-button>
             </div>
@@ -122,11 +122,15 @@
             </div>
             <el-scrollbar class="contentRight" height="100%">
                 <div
-                    v-for="item in tableData"
-                    :key="item.index"
+                    v-for="(item, index) in transLog"
+                    :key="index"
                     class="logItem"
                 >
-                    这是日志数据，暂时是假数据，包含输入文件夹、输出文件夹、文件列表展示以及批量执行功能。
+                    <span>文件名: {{ item.fileName }}</span>
+                    <span>开始时间: {{ item.startTime }}</span>
+                    <span>结束时间: {{ item.endTime }}</span>
+                    <span>持续时间: {{ item.during }}</span>
+                    <span>转换状态: {{ item.success }}</span>
                 </div>
             </el-scrollbar>
         </div>
@@ -141,19 +145,19 @@ import { timeFormat, loadingText } from './utils/common'
 import { useI18n } from 'vue-i18n'
 import VConsole from 'vconsole'
 import { Command } from '@tauri-apps/plugin-shell'
-import { openPath } from '@tauri-apps/plugin-opener'
 import { join } from '@tauri-apps/api/path'
 import { ElMessage } from 'element-plus'
-import { ElLoading } from 'element-plus'
 
 const transLoading = ref(false)
 
 const { t } = useI18n()
 
-const inputDir = ref('E:\\Project\\TauriMan\\docs\\testcmd\\3dfile')
-const outputDir = ref('E:\\Project\\TauriMan\\docs\\testcmd\\ouput')
+const inputDir = ref(localStorage.getItem('inputDir') || '')
+const outputDir = ref(localStorage.getItem('outputDir') || '')
 
 const tableData = ref<any[]>([])
+
+const transLog = ref<any[]>([])
 
 // 选择文件夹
 const selectDir = (type: string) => {
@@ -163,9 +167,11 @@ const selectDir = (type: string) => {
         console.log('选择文件夹', res)
         if (type === 'input') {
             inputDir.value = res || ''
+            localStorage.setItem('inputDir', inputDir.value)
             res && readDir(res)
         } else {
             outputDir.value = res || ''
+            localStorage.setItem('outputDir', outputDir.value)
         }
     })
 }
@@ -204,6 +210,14 @@ const openDir = (dir: string) => {
 // 执行命令
 const runCommand = async (fileName: string, isBundle: boolean = false) => {
     console.log('执行命令', fileName)
+    // 创建本次执行的记录
+    const logString: any = {
+        fileName,
+        startTime: new Date().toISOString(),
+        inputDir: inputDir.value,
+        outputDir: outputDir.value,
+    }
+
     if (!inputDir.value || !outputDir.value) {
         ElMessage.error('请先选择输入和输出文件夹')
         return
@@ -228,7 +242,22 @@ const runCommand = async (fileName: string, isBundle: boolean = false) => {
         console.log('command output', output)
         console.log('out:', output.stdout)
         console.log('err:', output.stderr)
+        // 记录成功信息
+        logString.endTime = new Date().toISOString()
+        logString.success = true
+        logString.durationMs =
+            new Date(logString.endTime).getTime() -
+            new Date(logString.startTime).getTime()
+        transLog.value.push(logString)
     } catch (error) {
+        // 记录错误信息
+        logString.endTime = new Date().toISOString()
+        logString.success = false
+        logString.error = error instanceof Error ? error.message : String(error)
+        logString.durationMs =
+            new Date(logString.endTime).getTime() -
+            new Date(logString.startTime).getTime()
+        transLog.value.push(logString)
         console.error('执行命令失败', error)
         ElMessage.error(`执行命令失败: ${error}`)
     } finally {
@@ -237,11 +266,28 @@ const runCommand = async (fileName: string, isBundle: boolean = false) => {
         } else {
             transLoading.value = false
         }
+        console.log('执行命令完成', transLog.value)
     }
+}
+
+// 批量执行命令
+const runBundleCmd = async () => {
+    console.log('批量执行命令')
+    if (!inputDir.value || !outputDir.value) {
+        ElMessage.error('请先选择输入和输出文件夹')
+        return
+    }
+    transLoading.value = true
+    for (const item of tableData.value) {
+        await runCommand(item.name, true)
+    }
+    transLoading.value = false
+    ElMessage.success('批量转换完成')
 }
 
 onMounted(() => {
     console.log('mounted')
+    inputDir.value && readDir(inputDir.value)
 })
 </script>
 
