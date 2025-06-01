@@ -1,5 +1,10 @@
 <template>
-    <div class="container">
+    <div
+        class="container"
+        id="app"
+        v-loading.fullscreen.lock="transLoading"
+        element-loading-text="转换中"
+    >
         <!-- header -->
         <div class="header">
             <div class="headerLeft">
@@ -132,18 +137,21 @@
 import { onMounted, ref } from 'vue'
 import { open } from '@tauri-apps/plugin-dialog'
 import { invoke } from '@tauri-apps/api/core'
-import { timeFormat } from './utils/common'
+import { timeFormat, loadingText } from './utils/common'
 import { useI18n } from 'vue-i18n'
 import VConsole from 'vconsole'
 import { Command } from '@tauri-apps/plugin-shell'
 import { openPath } from '@tauri-apps/plugin-opener'
 import { join } from '@tauri-apps/api/path'
 import { ElMessage } from 'element-plus'
+import { ElLoading } from 'element-plus'
+
+const transLoading = ref(false)
 
 const { t } = useI18n()
 
-const inputDir = ref('')
-const outputDir = ref('')
+const inputDir = ref('E:\\Project\\TauriMan\\docs\\testcmd\\3dfile')
+const outputDir = ref('E:\\Project\\TauriMan\\docs\\testcmd\\ouput')
 
 const tableData = ref<any[]>([])
 
@@ -194,24 +202,42 @@ const openDir = (dir: string) => {
 }
 
 // 执行命令
-const runCommand = async (fileName: string) => {
+const runCommand = async (fileName: string, isBundle: boolean = false) => {
     console.log('执行命令', fileName)
     if (!inputDir.value || !outputDir.value) {
         ElMessage.error('请先选择输入和输出文件夹')
         return
     }
-    const inputFilePath = await join(inputDir.value, fileName)
-    console.log('inputFilePath', inputFilePath, 'outputDir', outputDir.value)
-    const command = Command.sidecar('bin/rockcamrun', [
-        '-i',
-        inputFilePath,
-        '-o',
-        outputDir.value,
-    ])
-    const output = await command.execute()
-    console.log('command output', output)
-    console.log('out:', output.stdout)
-    console.log('err:', output.stderr)
+    transLoading.value = true
+    try {
+        const inputFilePath = await join(inputDir.value, fileName)
+        console.log(
+            'inputFilePath',
+            inputFilePath,
+            'outputDir',
+            outputDir.value
+        )
+        const command = Command.sidecar('bin/rockcamrun', [
+            '-i',
+            inputFilePath,
+            '-o',
+            outputDir.value,
+        ])
+        loadingText(`正在转换文件 ${fileName}...`)
+        const output = await command.execute()
+        console.log('command output', output)
+        console.log('out:', output.stdout)
+        console.log('err:', output.stderr)
+    } catch (error) {
+        console.error('执行命令失败', error)
+        ElMessage.error(`执行命令失败: ${error}`)
+    } finally {
+        if (isBundle) {
+            console.log('批量执行...')
+        } else {
+            transLoading.value = false
+        }
+    }
 }
 
 onMounted(() => {
@@ -229,29 +255,29 @@ onMounted(() => {
     overflow: hidden;
 
     .header {
-        height: 50px;
+        height: 3.125rem;
         display: flex;
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
-        padding: 20px;
-        gap: 20px;
+        padding: 1.25rem;
+        gap: 1.25rem;
 
         .headerLeft {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 0.625rem;
             flex: 1;
 
             .inputBtn {
-                width: 160px;
+                width: 10rem;
             }
 
             .inputBox {
                 display: flex;
                 flex-direction: row;
                 align-items: center;
-                gap: 10px;
+                gap: 0.625rem;
 
                 .inputDir {
                     flex: 1;
@@ -260,19 +286,19 @@ onMounted(() => {
                 .checkBtn {
                     color: #409eff;
                     cursor: pointer;
-                    font-size: 12px;
+                    font-size: 0.75rem;
                     // text-decoration: underline;
                 }
             }
         }
 
         .headerRight {
-            width: 300px;
+            width: 18.75rem;
             height: 100%;
             display: flex;
             flex-direction: row;
             justify-content: space-between;
-            gap: 10px;
+            gap: 0.625rem;
 
             .batchBtn {
                 width: 100%;
@@ -286,8 +312,8 @@ onMounted(() => {
         display: flex;
         flex-direction: row;
         justify-content: space-between;
-        padding: 0 20px 20px 20px;
-        gap: 20px;
+        padding: 0 1.25rem 1.25rem 1.25rem;
+        gap: 1.25rem;
         overflow: hidden;
 
         .contentLeft {
@@ -310,15 +336,15 @@ onMounted(() => {
         }
 
         .contentRight {
-            width: 300px;
-            border: 1px solid rgb(223, 223, 223);
-            border-radius: 10px;
+            width: 18.75rem;
+            border: 0.0625rem solid rgb(223, 223, 223);
+            border-radius: 0.625rem;
             // overflow-y: scroll;
 
             .logItem {
                 color: gray;
-                margin: 10px;
-                font-size: 12px;
+                margin: 0.625rem;
+                font-size: 0.75rem;
             }
         }
     }
