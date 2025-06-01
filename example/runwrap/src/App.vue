@@ -31,7 +31,9 @@
                 </div>
             </div>
             <div class="headerRight">
-                <el-button class="batchBtn">{{ t('start') }}</el-button>
+                <el-button @click="runCommand" class="batchBtn">
+                    {{ t('start') }}
+                </el-button>
             </div>
         </div>
         <!-- content -->
@@ -43,7 +45,7 @@
                     border
                     class="tableBox"
                     :empty-text="t('empty')"
-                    scrollbar-always-on="false"
+                    :scrollbar-always-on="false"
                 >
                     <el-table-column
                         prop="index"
@@ -70,7 +72,7 @@
                         align="center"
                     >
                         <template #default="scope">
-                            <el-button>
+                            <el-button @click="runCommand(scope.row.name)">
                                 <el-icon class="actionIcon" size="20">
                                     <CaretRight />
                                 </el-icon>
@@ -133,6 +135,10 @@ import { invoke } from '@tauri-apps/api/core'
 import { timeFormat } from './utils/common'
 import { useI18n } from 'vue-i18n'
 import VConsole from 'vconsole'
+import { Command } from '@tauri-apps/plugin-shell'
+import { openPath } from '@tauri-apps/plugin-opener'
+import { join } from '@tauri-apps/api/path'
+import { ElMessage } from 'element-plus'
 
 const { t } = useI18n()
 
@@ -174,6 +180,10 @@ const readDir = async (dir: string) => {
 // 打开文件夹
 const openDir = (dir: string) => {
     console.log('打开文件夹', dir)
+    if (!dir || dir === '') {
+        ElMessage.error('请先选择输入和输出文件夹')
+        return
+    }
     if (dir === 'debug') {
         const _ = new VConsole()
     } else {
@@ -182,6 +192,28 @@ const openDir = (dir: string) => {
         })
     }
 }
+
+// 执行命令
+const runCommand = async (fileName: string) => {
+    console.log('执行命令', fileName)
+    if (!inputDir.value || !outputDir.value) {
+        ElMessage.error('请先选择输入和输出文件夹')
+        return
+    }
+    const inputFilePath = await join(inputDir.value, fileName)
+    console.log('inputFilePath', inputFilePath, 'outputDir', outputDir.value)
+    const command = Command.sidecar('bin/rockcamrun', [
+        '-i',
+        inputFilePath,
+        '-o',
+        outputDir.value,
+    ])
+    const output = await command.execute()
+    console.log('command output', output)
+    console.log('out:', output.stdout)
+    console.log('err:', output.stderr)
+}
+
 onMounted(() => {
     console.log('mounted')
 })
