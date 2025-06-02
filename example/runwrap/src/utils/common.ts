@@ -33,3 +33,12 @@ export const timeFormat = (timestamp: number) => {
     // 组合成目标格式
     return `${year}-${month}-${day} ${hours}:${minutes}`
 }
+
+// loading text
+export const loadingText = (text: string) => {
+    if (document.querySelector('.el-loading-text')) {
+        document.querySelector('.el-loading-text')!.innerHTML = text
+    } else {
+        console.log('no loading')
+    }
+}

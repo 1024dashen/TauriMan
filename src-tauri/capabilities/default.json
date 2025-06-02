@@ -62,9 +62,14 @@
             "identifier": "shell:allow-execute",
             "allow": [
                 {
-                    "name": "bin/fnm",
+                    "name": "bin/rockcamrun",
                     "sidecar": true,
-                    "args": ["--version"]
+                    "args": [
+                        "-i",
+                        { "validator": ".*?" },
+                        "-o",
+                        { "validator": ".*?" }
+                    ]
                 }
             ]
         },
