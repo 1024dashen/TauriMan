@@ -210,10 +210,15 @@ const openDir = (dir: string) => {
 
 // run help
 const runHelp = async () => {
-    const command = await invoke('run_command', {
-        command: '/Users/song/Project/my/TauriMan/src-tauri/bin/fnm --version',
-    })
-    console.log('run_command------', command)
+    try {
+        const command = await invoke('run_command', {
+            command:
+                'D:\\ShenProject\\TauriMan\\src-tauri\\config\\bin\\fnm.exe --version',
+        })
+        console.log('run_command------', command)
+    } catch (error) {
+        console.error('执行命令失败', error)
+    }
 }
 
 // 执行命令
