@@ -101,7 +101,7 @@
                         align="center"
                     >
                         <template #default="scope">
-                            <el-button>
+                            <el-button @click="runHelp">
                                 <el-icon><Document /></el-icon>
                             </el-button>
                         </template>
@@ -206,6 +206,16 @@ const openDir = (dir: string) => {
             path: dir,
         })
     }
+}
+
+// run help
+const runHelp = async () => {
+    const command = Command.sidecar('bin/rockcamrun', ['--help'])
+    loadingText(`正在help...`)
+    const output = await command.execute()
+    console.log('command output', output)
+    console.log('out:', output.stdout)
+    console.log('err:', output.stderr)
 }
 
 // 执行命令
