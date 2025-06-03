@@ -59,21 +59,6 @@
         "fs:allow-appdata-write",
         "fs:allow-appdata-write-recursive",
         {
-            "identifier": "shell:allow-execute",
-            "allow": [
-                {
-                    "name": "bin/rockcamrun",
-                    "sidecar": true,
-                    "args": [
-                        "-i",
-                        { "validator": ".*?" },
-                        "-o",
-                        { "validator": ".*?" }
-                    ]
-                }
-            ]
-        },
-        {
             "identifier": "fs:scope",
             "allow": [
                 "**",

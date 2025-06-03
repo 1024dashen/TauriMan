@@ -1,3 +1,4 @@
+use super::model::FileInfo;
 use super::model::ServerState;
 use machine_uid;
 use std::env;
@@ -5,10 +6,10 @@ use std::fs;
 use std::io;
 use std::net::TcpListener;
 use std::path::PathBuf;
+use std::process::Command;
 use std::sync::{Arc, Mutex};
-use warp::Filter;
 use std::time::UNIX_EPOCH;
-use super::model::FileInfo;
+use warp::Filter;
 
 // load man.json
 pub fn load_man(base_dir: &str) -> Result<String, io::Error> {
@@ -25,6 +26,21 @@ pub fn load_man(base_dir: &str) -> Result<String, io::Error> {
             // 其他类型的错误仍然返回
             Err(e)
         }
+    }
+}
+
+#[tauri::command]
+pub fn run_command(command: String) -> Result<String, String> {
+    let output = if cfg!(target_os = "windows") {
+        Command::new("cmd").args(&["/C", &command]).output().unwrap()
+    } else {
+        Command::new("sh").arg("-c").arg(&command).output().unwrap()
+    };
+
+    if output.status.success() {
+        Ok(String::from_utf8_lossy(&output.stdout).to_string())
+    } else {
+        Err(String::from_utf8_lossy(&output.stderr).to_string())
     }
 }
 

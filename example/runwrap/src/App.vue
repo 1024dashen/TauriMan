@@ -210,12 +210,10 @@ const openDir = (dir: string) => {
 
 // run help
 const runHelp = async () => {
-    const command = Command.sidecar('bin/rockcamrun', ['--help'])
-    loadingText(`正在help...`)
-    const output = await command.execute()
-    console.log('command output', output)
-    console.log('out:', output.stdout)
-    console.log('err:', output.stderr)
+    const command = await invoke('run_command', {
+        command: '/Users/song/Project/my/TauriMan/src-tauri/bin/fnm --version',
+    })
+    console.log('run_command------', command)
 }
 
 // 执行命令
