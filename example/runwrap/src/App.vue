@@ -251,7 +251,7 @@ const transFile = async (fileName: string, isBundle: boolean = false) => {
         )
         loadingText(`正在转换文件 ${fileName}...`)
         const result = await runCommand(
-            `-i ${inputFilePath} -o ${outputDir.value}`
+            `-i "${inputFilePath}" -o ${outputDir.value}`
         )
         if (result) {
             // 记录成功信息
