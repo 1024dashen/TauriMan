@@ -126,11 +126,7 @@
                     :key="index"
                     class="logItem"
                 >
-                    <span>文件名: {{ item.fileName }}</span>
-                    <span>开始时间: {{ item.startTime }}</span>
-                    <span>结束时间: {{ item.endTime }}</span>
-                    <span>持续时间: {{ item.during }}</span>
-                    <span>转换状态: {{ item.success }}</span>
+                    <span>{{ item }}</span>
                 </div>
             </el-scrollbar>
         </div>
@@ -144,7 +140,6 @@ import { invoke } from '@tauri-apps/api/core'
 import { timeFormat, loadingText } from './utils/common'
 import { useI18n } from 'vue-i18n'
 import VConsole from 'vconsole'
-import { Command } from '@tauri-apps/plugin-shell'
 import { join } from '@tauri-apps/api/path'
 import { ElMessage } from 'element-plus'
 import i18n from '@/lang'
@@ -231,21 +226,15 @@ const runCommand = async (command: string) => {
             command: `${rockcamrun} ${command}`,
         })
         console.log('run_command------', result)
+        return true
     } catch (error) {
         console.error('执行命令失败', error)
+        return false
     }
 }
 // 执行转换文件逻辑
 const transFile = async (fileName: string, isBundle: boolean = false) => {
     console.log('执行命令', fileName)
-    // 创建本次执行的记录
-    const logString: any = {
-        fileName,
-        startTime: new Date().toISOString(),
-        inputDir: inputDir.value,
-        outputDir: outputDir.value,
-    }
-
     if (!inputDir.value || !outputDir.value) {
         ElMessage.error('请先选择输入和输出文件夹')
         return
@@ -259,32 +248,22 @@ const transFile = async (fileName: string, isBundle: boolean = false) => {
             'outputDir',
             outputDir.value
         )
-        const command = Command.sidecar('bin/rockcamrun', [
-            '-i',
-            inputFilePath,
-            '-o',
-            outputDir.value,
-        ])
         loadingText(`正在转换文件 ${fileName}...`)
-        const output = await command.execute()
-        console.log('command output', output)
-        console.log('out:', output.stdout)
-        console.log('err:', output.stderr)
-        // 记录成功信息
-        logString.endTime = new Date().toISOString()
-        logString.success = true
-        logString.durationMs =
-            new Date(logString.endTime).getTime() -
-            new Date(logString.startTime).getTime()
-        transLog.value.push(logString)
+        const result = await runCommand(
+            `-i ${inputFilePath} -o ${outputDir.value}`
+        )
+        if (result) {
+            // 记录成功信息
+            const logString = `文件 ${fileName} 转换成功`
+            transLog.value.push(logString)
+        } else {
+            // 记录错误信息
+            const logString = `文件 ${fileName} 转换失败`
+            transLog.value.push(logString)
+        }
     } catch (error) {
         // 记录错误信息
-        logString.endTime = new Date().toISOString()
-        logString.success = false
-        logString.error = error instanceof Error ? error.message : String(error)
-        logString.durationMs =
-            new Date(logString.endTime).getTime() -
-            new Date(logString.startTime).getTime()
+        const logString = `文件 ${fileName} 转换失败`
         transLog.value.push(logString)
         console.error('执行命令失败', error)
         ElMessage.error(`执行命令失败: ${error}`)
