@@ -83,7 +83,7 @@
                         <template #default="scope">
                             <el-button
                                 :disabled="btnDisabled"
-                                @click="transFile(scope.row.name)"
+                                @click="transFile(scope.row)"
                             >
                                 <el-icon
                                     class="actionIcon"
@@ -114,6 +114,7 @@
                         <template #default="scope">
                             <el-button
                                 :disabled="btnDisabled"
+                                v-if="scope.row.state === 1"
                                 @click="runCommand('--version')"
                             >
                                 <el-icon><Document /></el-icon>
@@ -131,7 +132,7 @@
                                 :disabled="btnDisabled"
                                 type="danger"
                                 plain
-                                @click="removeData(scope.row.index)"
+                                @click.prevent="deleteRow(scope.$index)"
                             >
                                 <el-icon><Delete /></el-icon>
                             </el-button>
@@ -205,6 +206,7 @@ const readDir = async (dir: string) => {
     })
     console.log('读取文件夹结果', res)
     let index = 1
+    // state 0: 未转换 1: 转换成功 2: 转换失败
     tableData.value = res.map((item: any) => ({
         ...item,
         index: index++,
@@ -260,9 +262,9 @@ const runCommand = async (command: string) => {
     }
 }
 
-
 // 执行转换文件逻辑
-const transFile = async (fileName: string, isBundle: boolean = false) => {
+const transFile = async (file: any, isBundle: boolean = false) => {
+    const fileName = file.name
     console.log('执行命令', fileName)
     if (!inputDir.value || !outputDir.value) {
         ElMessage.error('请先选择输入和输出文件夹')
@@ -285,10 +287,12 @@ const transFile = async (fileName: string, isBundle: boolean = false) => {
             // 记录成功信息
             const logString = `文件 ${fileName} 转换成功`
             transLog.value.push(logString)
+            file.state = 1
         } else {
             // 记录错误信息
             const logString = `文件 ${fileName} 转换失败`
             transLog.value.push(logString)
+            file.state = 2
         }
     } catch (error) {
         // 记录错误信息
@@ -296,6 +300,7 @@ const transFile = async (fileName: string, isBundle: boolean = false) => {
         transLog.value.push(logString)
         console.error('执行命令失败', error)
         ElMessage.error(`执行命令失败: ${error}`)
+        file.state = 2
     } finally {
         if (isBundle) {
             console.log('批量执行...')
@@ -315,17 +320,17 @@ const runBundleCmd = async () => {
     }
     transLoading.value = true
     for (const item of tableData.value) {
-        await transFile(item.name, true)
+        await transFile(item, true)
     }
     transLoading.value = false
     ElMessage.success('批量转换完成')
 }
 
-
 // 移除某个数据
-const removeData = (index: number) => {
-    tableData.value.splice(index - 1, 1)
+const deleteRow = (index: number) => {
+  tableData.value.splice(index, 1)
 }
+
 
 const initLang = async () => {
     try {
@@ -342,9 +347,45 @@ const initLang = async () => {
     }
 }
 
+const disableRightClick = () => {
+    //禁止F12
+    document.onkeydown = function (event: any) {
+        var winEvent: any = window.event
+        if (winEvent && winEvent.keyCode == 123) {
+            event.keyCode = 0
+            event.returnValue = false
+        }
+        if (winEvent && winEvent.keyCode == 13) {
+            winEvent.keyCode = 505
+        }
+    }
+    //屏蔽右键菜单
+    document.oncontextmenu = function (event: any) {
+        if (window.event) {
+            event = window.event
+        }
+        try {
+            var the = event.srcElement
+            if (
+                !(
+                    (the.tagName == 'INPUT' &&
+                        the.type.toLowerCase() == 'text') ||
+                    the.tagName == 'TEXTAREA'
+                )
+            ) {
+                return false
+            }
+            return true
+        } catch (e) {
+            return false
+        }
+    }
+}
+
 onMounted(() => {
     console.log('mounted')
     initLang()
+    !import.meta.env.DEV && disableRightClick()
     inputDir.value && readDir(inputDir.value)
 })
 </script>
