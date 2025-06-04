@@ -6,7 +6,6 @@ use std::fs;
 use std::io;
 use std::net::TcpListener;
 use std::path::PathBuf;
-use std::process::Command;
 use std::sync::{Arc, Mutex};
 use std::time::UNIX_EPOCH;
 use warp::Filter;
