@@ -271,6 +271,7 @@ const transFile = async (file: any, isBundle: boolean = false) => {
         return
     }
     transLoading.value = true
+    btnDisabled.value = true
     try {
         const inputFilePath = await join(inputDir.value, fileName)
         console.log(
@@ -307,6 +308,7 @@ const transFile = async (file: any, isBundle: boolean = false) => {
         } else {
             transLoading.value = false
         }
+        btnDisabled.value = false
         console.log('执行命令完成', transLog.value)
     }
 }
@@ -328,9 +330,8 @@ const runBundleCmd = async () => {
 
 // 移除某个数据
 const deleteRow = (index: number) => {
-  tableData.value.splice(index, 1)
+    tableData.value.splice(index, 1)
 }
-
 
 const initLang = async () => {
     try {

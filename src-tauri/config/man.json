@@ -42,7 +42,7 @@
             "label": "中文",
             "inputDir": "输入文件夹",
             "outputDir": "输出文件夹",
-            "start": "开始",
+            "start": "批量执行",
             "stop": "停止",
             "clear": "清除",
             "about": "关于",
