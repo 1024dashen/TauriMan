@@ -36,7 +36,11 @@
                 </div>
             </div>
             <div class="headerRight">
-                <el-button @click="runBundleCmd" class="batchBtn">
+                <el-button
+                    @click="runBundleCmd"
+                    :disabled="btnDisabled"
+                    class="batchBtn"
+                >
                     {{ t('start') }}
                 </el-button>
             </div>
@@ -77,8 +81,15 @@
                         align="center"
                     >
                         <template #default="scope">
-                            <el-button @click="transFile(scope.row.name)">
-                                <el-icon class="actionIcon" size="20">
+                            <el-button
+                                :disabled="btnDisabled"
+                                @click="transFile(scope.row.name)"
+                            >
+                                <el-icon
+                                    class="actionIcon"
+                                    :class="{ disabled: btnDisabled }"
+                                    size="20"
+                                >
                                     <CaretRight />
                                 </el-icon>
                             </el-button>
@@ -101,7 +112,10 @@
                         align="center"
                     >
                         <template #default="scope">
-                            <el-button @click="runCommand('--version')">
+                            <el-button
+                                :disabled="btnDisabled"
+                                @click="runCommand('--version')"
+                            >
                                 <el-icon><Document /></el-icon>
                             </el-button>
                         </template>
@@ -113,7 +127,12 @@
                         align="center"
                     >
                         <template #default="scope">
-                            <el-button type="danger" plain>
+                            <el-button
+                                :disabled="btnDisabled"
+                                type="danger"
+                                plain
+                                @click="removeData(scope.row.index)"
+                            >
                                 <el-icon><Delete /></el-icon>
                             </el-button>
                         </template>
@@ -144,15 +163,21 @@ import { join } from '@tauri-apps/api/path'
 import { ElMessage } from 'element-plus'
 import i18n from '@/lang'
 
+// 转换loading
 const transLoading = ref(false)
-
+// 国际化
 const { t } = useI18n()
 
+// 输入文件夹
 const inputDir = ref(localStorage.getItem('inputDir') || '')
+// 输出文件夹
 const outputDir = ref(localStorage.getItem('outputDir') || '')
+// 按钮状态是否可用
+const btnDisabled = ref(false)
 
+// 表格数据
 const tableData = ref<any[]>([])
-
+// 日志
 const transLog = ref<any[]>([])
 
 // 选择文件夹
@@ -183,6 +208,7 @@ const readDir = async (dir: string) => {
     tableData.value = res.map((item: any) => ({
         ...item,
         index: index++,
+        state: 0,
         update: timeFormat(item.modified),
     }))
 }
@@ -233,6 +259,8 @@ const runCommand = async (command: string) => {
         return false
     }
 }
+
+
 // 执行转换文件逻辑
 const transFile = async (fileName: string, isBundle: boolean = false) => {
     console.log('执行命令', fileName)
@@ -291,6 +319,12 @@ const runBundleCmd = async () => {
     }
     transLoading.value = false
     ElMessage.success('批量转换完成')
+}
+
+
+// 移除某个数据
+const removeData = (index: number) => {
+    tableData.value.splice(index - 1, 1)
 }
 
 const initLang = async () => {
@@ -397,6 +431,10 @@ onMounted(() => {
 
                 .actionIcon {
                     color: #409eff;
+                }
+
+                .disabled {
+                    color: #c0c4cc !important;
                 }
 
                 .deleted {
