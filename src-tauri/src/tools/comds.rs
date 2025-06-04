@@ -32,8 +32,9 @@ pub fn load_man(base_dir: &str) -> Result<String, io::Error> {
 #[tauri::command]
 pub async fn run_command(command: String) -> Result<String, String> {
     let output = if cfg!(target_os = "windows") {
-        tokio::process::Command::new("cmd")
-            .args(&["/C", &command])
+        tokio::process::Command::new("powershell")
+            .arg("-Command")
+            .arg(&command)
             .output()
             .await
             .map_err(|e| e.to_string())?
