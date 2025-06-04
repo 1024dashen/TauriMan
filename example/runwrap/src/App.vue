@@ -77,7 +77,7 @@
                         align="center"
                     >
                         <template #default="scope">
-                            <el-button @click="runCommand(scope.row.name)">
+                            <el-button @click="transFile(scope.row.name)">
                                 <el-icon class="actionIcon" size="20">
                                     <CaretRight />
                                 </el-icon>
@@ -101,7 +101,7 @@
                         align="center"
                     >
                         <template #default="scope">
-                            <el-button @click="runHelp">
+                            <el-button @click="runCommand('--version')">
                                 <el-icon><Document /></el-icon>
                             </el-button>
                         </template>
@@ -222,7 +222,21 @@ const runHelp = async () => {
 }
 
 // 执行命令
-const runCommand = async (fileName: string, isBundle: boolean = false) => {
+const runCommand = async (command: string) => {
+    try {
+        const currentDir: string = await invoke('get_exe_dir')
+        const rockcamrun = await join(currentDir, 'config', 'bin', 'fnm')
+        console.log('rockcamrun------', rockcamrun)
+        const result = await invoke('run_command', {
+            command: `${rockcamrun} ${command}`,
+        })
+        console.log('run_command------', result)
+    } catch (error) {
+        console.error('执行命令失败', error)
+    }
+}
+// 执行转换文件逻辑
+const transFile = async (fileName: string, isBundle: boolean = false) => {
     console.log('执行命令', fileName)
     // 创建本次执行的记录
     const logString: any = {
@@ -293,7 +307,7 @@ const runBundleCmd = async () => {
     }
     transLoading.value = true
     for (const item of tableData.value) {
-        await runCommand(item.name, true)
+        await transFile(item.name, true)
     }
     transLoading.value = false
     ElMessage.success('批量转换完成')
