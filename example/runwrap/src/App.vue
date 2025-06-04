@@ -220,7 +220,8 @@ const runHelp = async () => {
 const runCommand = async (command: string) => {
     try {
         const currentDir: string = await invoke('get_exe_dir')
-        const rockcamrun = await join(currentDir, 'config', 'bin', 'fnm')
+        // const rockcamrun = await join(currentDir, 'config', 'bin', 'fnm')
+        const rockcamrun = await join(currentDir, 'config', 'bin', 'rockcamrun')
         console.log('rockcamrun------', rockcamrun)
         const result = await invoke('run_command', {
             command: `${rockcamrun} ${command}`,
