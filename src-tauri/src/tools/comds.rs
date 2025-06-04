@@ -30,11 +30,20 @@ pub fn load_man(base_dir: &str) -> Result<String, io::Error> {
 }
 
 #[tauri::command]
-pub fn run_command(command: String) -> Result<String, String> {
+pub async fn run_command(command: String) -> Result<String, String> {
     let output = if cfg!(target_os = "windows") {
-        Command::new("cmd").args(&["/C", &command]).output().unwrap()
+        tokio::process::Command::new("cmd")
+            .args(&["/C", &command])
+            .output()
+            .await
+            .map_err(|e| e.to_string())?
     } else {
-        Command::new("sh").arg("-c").arg(&command).output().unwrap()
+        tokio::process::Command::new("sh")
+            .arg("-c")
+            .arg(&command)
+            .output()
+            .await
+            .map_err(|e| e.to_string())?
     };
 
     if output.status.success() {
