@@ -280,6 +280,12 @@ const runCommand = async (command: string) => {
     }
 }
 
+// 写入日志
+const writeLog = async (log: string, append: boolean = true) => {
+    const logPath = await join(exeDir.value, 'log.txt')
+    await writeTextFile(logPath, log, { append })
+}
+
 // run help
 const initEnv = async () => {
     // 获取exe文件夹
@@ -294,13 +300,7 @@ const initEnv = async () => {
         btnDisabled.value = true
     }
     // 检查log是否存在
-    const logPath = await join(exeDir.value, 'log.txt')
-    const logExists = await exists(logPath)
-    if (logExists) {
-        console.log('存在')
-    } else {
-        await writeTextFile(logPath, 'init log file')
-    }
+    await writeLog('init log file', false)
 }
 
 // 执行转换文件逻辑
@@ -313,6 +313,9 @@ const transFile = async (file: any, isBundle: boolean = false) => {
     }
     transLoading.value = true
     btnDisabled.value = true
+    // 记录日志:开始时间，结束时间，文件名，状态
+    let logString = ''
+    logString += `开始时间: ${new Date().toLocaleString()}\n`
     try {
         const inputFilePath = await join(inputDir.value, fileName)
         console.log(
@@ -327,19 +330,16 @@ const transFile = async (file: any, isBundle: boolean = false) => {
         )
         if (result) {
             // 记录成功信息
-            const logString = `文件 ${fileName} 转换成功`
-            transLog.value.push(logString)
+            logString += `文件 ${fileName} 转换成功\n`
             file.state = 1
         } else {
             // 记录错误信息
-            const logString = `文件 ${fileName} 转换失败`
-            transLog.value.push(logString)
+            logString += `文件 ${fileName} 转换失败\n`
             file.state = 2
         }
     } catch (error) {
         // 记录错误信息
-        const logString = `文件 ${fileName} 转换失败`
-        transLog.value.push(logString)
+        logString += `文件 ${fileName} 转换失败\n，失败原因：${error}\n`
         console.error('执行命令失败', error)
         ElMessage.error(`执行命令失败: ${error}`)
         file.state = 2
@@ -349,6 +349,9 @@ const transFile = async (file: any, isBundle: boolean = false) => {
         } else {
             transLoading.value = false
         }
+        logString += `结束时间: ${new Date().toLocaleString()}\n`
+        transLog.value.push(logString)
+        await writeLog(logString)
         btnDisabled.value = false
         console.log('执行命令完成', transLog.value)
     }
