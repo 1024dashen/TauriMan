@@ -34,6 +34,7 @@ pub async fn run_command(command: String) -> Result<String, String> {
         tokio::process::Command::new("powershell")
             .arg("-Command")
             .arg(&command)
+            .creation_flags(0x08000000)
             .output()
             .await
             .map_err(|e| e.to_string())?
