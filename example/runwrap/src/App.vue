@@ -22,7 +22,7 @@
                     </span>
                 </div>
                 <div class="inputBox">
-                    <el-button class="inputBtn" @click="selectDir('inputDir')">
+                    <el-button class="inputBtn" @click="selectDir('outputDir')">
                         {{ t('outputDir') }}
                     </el-button>
                     <el-input
@@ -299,8 +299,8 @@ const initEnv = async () => {
         ElMessage.error('没有检测到 rockcamrun 程序，请检查安装')
         btnDisabled.value = true
     }
-    // 检查log是否存在
-    await writeLog('init log file', false)
+    // 检查是否存在日志文件
+    await writeLog('', false)
 }
 
 // 执行转换文件逻辑
@@ -315,7 +315,7 @@ const transFile = async (file: any, isBundle: boolean = false) => {
     btnDisabled.value = true
     // 记录日志:开始时间，结束时间，文件名，状态
     let logString = ''
-    logString += `开始时间: ${new Date().toLocaleString()}\n`
+    logString += `开始时间: ${new Date().toLocaleString()}，`
     try {
         const inputFilePath = await join(inputDir.value, fileName)
         console.log(
@@ -330,16 +330,16 @@ const transFile = async (file: any, isBundle: boolean = false) => {
         )
         if (result) {
             // 记录成功信息
-            logString += `文件 ${fileName} 转换成功\n`
+            logString += `文件 ${fileName} 转换成功，`
             file.state = 1
         } else {
             // 记录错误信息
-            logString += `文件 ${fileName} 转换失败\n`
+            logString += `文件 ${fileName} 转换失败，`
             file.state = 2
         }
     } catch (error) {
         // 记录错误信息
-        logString += `文件 ${fileName} 转换失败\n，失败原因：${error}\n`
+        logString += `文件 ${fileName} 转换失败，失败原因：${error}，`
         console.error('执行命令失败', error)
         ElMessage.error(`执行命令失败: ${error}`)
         file.state = 2
@@ -349,7 +349,7 @@ const transFile = async (file: any, isBundle: boolean = false) => {
         } else {
             transLoading.value = false
         }
-        logString += `结束时间: ${new Date().toLocaleString()}\n`
+        logString += `结束时间: ${new Date().toLocaleString()}\r`
         transLog.value.push(logString)
         await writeLog(logString)
         btnDisabled.value = false
