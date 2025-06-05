@@ -61,7 +61,6 @@
                         :label="t('index')"
                         width="60"
                         align="center"
-                        sortable
                     />
                     <el-table-column prop="name" sortable :label="t('name')" />
                     <el-table-column
@@ -261,12 +260,7 @@ const openDir = (dir: string) => {
 const runCommand = async (command: string) => {
     try {
         // const rockcamrun = await join(currentDir, 'config', 'bin', 'fnm')
-        const rockcamrun = await join(
-            exeDir.value,
-            'config',
-            'bin',
-            'rockcamrun'
-        )
+        const rockcamrun = await join(exeDir.value, 'rockcamrun')
         console.log('rockcamrun------', rockcamrun)
         const result: string = await invoke('run_command', {
             command: `${rockcamrun} ${command}`,
@@ -305,7 +299,7 @@ const initEnv = async () => {
     if (logExists) {
         console.log('存在')
     } else {
-        await writeTextFile(logPath, 'init log')
+        await writeTextFile(logPath, 'init log file')
     }
 }
 
