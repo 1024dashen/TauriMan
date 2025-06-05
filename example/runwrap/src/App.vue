@@ -9,7 +9,7 @@
         <div class="header">
             <div class="headerLeft">
                 <div class="inputBox">
-                    <el-button class="inputBtn" @click="selectDir('input')">
+                    <el-button class="inputBtn" @click="selectDir('inputDir')">
                         {{ t('inputDir') }}
                     </el-button>
                     <el-input
@@ -22,7 +22,7 @@
                     </span>
                 </div>
                 <div class="inputBox">
-                    <el-button class="inputBtn" @click="selectDir('output')">
+                    <el-button class="inputBtn" @click="selectDir('inputDir')">
                         {{ t('outputDir') }}
                     </el-button>
                     <el-input
@@ -63,11 +63,7 @@
                         align="center"
                         sortable
                     />
-                    <el-table-column
-                        prop="name"
-                        sortable
-                        :label="t('name')"
-                    />
+                    <el-table-column prop="name" sortable :label="t('name')" />
                     <el-table-column
                         prop="size"
                         :label="t('size')"
@@ -182,12 +178,15 @@ import { useI18n } from 'vue-i18n'
 import VConsole from 'vconsole'
 import { join } from '@tauri-apps/api/path'
 import { ElMessage } from 'element-plus'
+import { exists, writeTextFile } from '@tauri-apps/plugin-fs'
 import i18n from '@/lang'
 
 // 转换loading
 const transLoading = ref(false)
 // 国际化
 const { t } = useI18n()
+// exe dir
+const exeDir = ref('')
 
 // 输入文件夹
 const inputDir = ref(localStorage.getItem('inputDir') || '')
@@ -207,7 +206,7 @@ const selectDir = (type: string) => {
         directory: true,
     }).then((res) => {
         console.log('选择文件夹', res)
-        if (type === 'input') {
+        if (type === 'inputDir') {
             inputDir.value = res || ''
             localStorage.setItem('inputDir', inputDir.value)
             res && readDir(res)
@@ -261,9 +260,13 @@ const openDir = (dir: string) => {
 // 执行命令
 const runCommand = async (command: string) => {
     try {
-        const currentDir: string = await invoke('get_exe_dir')
         // const rockcamrun = await join(currentDir, 'config', 'bin', 'fnm')
-        const rockcamrun = await join(currentDir, 'config', 'bin', 'rockcamrun')
+        const rockcamrun = await join(
+            exeDir.value,
+            'config',
+            'bin',
+            'rockcamrun'
+        )
         console.log('rockcamrun------', rockcamrun)
         const result: string = await invoke('run_command', {
             command: `${rockcamrun} ${command}`,
@@ -284,7 +287,10 @@ const runCommand = async (command: string) => {
 }
 
 // run help
-const runHelp = async () => {
+const initEnv = async () => {
+    // 获取exe文件夹
+    exeDir.value = await invoke('get_exe_dir')
+    // 检查是否存在rockcamrun
     const check = await runCommand('--help')
     if (check) {
         console.log('执行帮助命令成功')
@@ -292,6 +298,14 @@ const runHelp = async () => {
         console.error('执行帮助命令失败')
         ElMessage.error('没有检测到 rockcamrun 程序，请检查安装')
         btnDisabled.value = true
+    }
+    // 检查log是否存在
+    const logPath = await join(exeDir.value, 'log.txt')
+    const logExists = await exists(logPath)
+    if (logExists) {
+        console.log('存在')
+    } else {
+        await writeTextFile(logPath, 'init log')
     }
 }
 
@@ -419,7 +433,7 @@ const disableRightClick = () => {
 onMounted(async () => {
     console.log('mounted')
     await initLang()
-    await runHelp()
+    await initEnv()
     !import.meta.env.DEV && disableRightClick()
     inputDir.value && readDir(inputDir.value)
 })
