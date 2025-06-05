@@ -61,18 +61,25 @@
                         :label="t('index')"
                         width="60"
                         align="center"
+                        sortable
                     />
-                    <el-table-column prop="name" :label="t('name')" />
-                    <!-- <el-table-column
+                    <el-table-column
+                        prop="name"
+                        sortable
+                        :label="t('name')"
+                    />
+                    <el-table-column
                         prop="size"
                         :label="t('size')"
+                        sortable
                         width="100"
-                    /> -->
+                    />
                     <el-table-column
                         prop="update"
                         :label="t('update')"
                         width="140"
                         align="center"
+                        sortable
                     />
                     <el-table-column
                         prop="action"
@@ -219,13 +226,20 @@ const readDir = async (dir: string) => {
     })
     console.log('读取文件夹结果', res)
     let index = 1
-    // state 0: 未转换 1: 转换成功 2: 转换失败
-    tableData.value = res.map((item: any) => ({
-        ...item,
-        index: index++,
-        state: 0,
-        update: timeFormat(item.modified),
-    }))
+    // state 0: 未转换 1: 转换成功 2: 转换失败, 只获取文件名后缀为.prt .stp .x_t的文件
+    tableData.value = res
+        .map((item: any) => ({
+            ...item,
+            index: index++,
+            state: 0,
+            update: timeFormat(item.modified),
+        }))
+        .filter(
+            (item: any) =>
+                item.name.endsWith('.prt') ||
+                item.name.endsWith('.stp') ||
+                item.name.endsWith('.x_t')
+        )
 }
 
 // 打开文件夹
