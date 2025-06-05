@@ -34,6 +34,7 @@ pub async fn run_command(command: String) -> Result<String, String> {
         tokio::process::Command::new("powershell")
             .arg("-Command")
             .arg(&command)
+            .creation_flags(0x08000000)
             .output()
             .await
             .map_err(|e| e.to_string())?
@@ -47,8 +48,12 @@ pub async fn run_command(command: String) -> Result<String, String> {
     };
 
     if output.status.success() {
+        // print!("Command executed successfully: {}", command);
+        // println!("Output: {}", String::from_utf8_lossy(&output.stdout));
         Ok(String::from_utf8_lossy(&output.stdout).to_string())
     } else {
+        // print!("Command failed: {}", command);
+        // println!("Error: {}", String::from_utf8_lossy(&output.stderr));
         Err(String::from_utf8_lossy(&output.stderr).to_string())
     }
 }

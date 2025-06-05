@@ -3181,6 +3181,23 @@ dependencies = [
 ]
 
 [[package]]
+name = "rockcamrunwrap"
+version = "0.1.1"
+dependencies = [
+ "machine-uid",
+ "serde",
+ "serde_json",
+ "tauri",
+ "tauri-build",
+ "tauri-plugin-dialog",
+ "tauri-plugin-fs",
+ "tauri-plugin-opener",
+ "tauri-plugin-store",
+ "tokio",
+ "warp",
+]
+
+[[package]]
 name = "rustc-demangle"
 version = "0.1.24"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4062,23 +4079,6 @@ dependencies = [
  "embed-resource",
  "indexmap 2.9.0",
  "toml",
-]
-
-[[package]]
-name = "tauriman"
-version = "0.1.1"
-dependencies = [
- "machine-uid",
- "serde",
- "serde_json",
- "tauri",
- "tauri-build",
- "tauri-plugin-dialog",
- "tauri-plugin-fs",
- "tauri-plugin-opener",
- "tauri-plugin-store",
- "tokio",
- "warp",
 ]
 
 [[package]]

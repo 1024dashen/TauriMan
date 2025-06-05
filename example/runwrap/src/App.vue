@@ -102,7 +102,20 @@
                         align="center"
                     >
                         <template #default="scope">
-                            {{ t('waiting') }}
+                            <!-- // state 0: 未转换 1: 转换成功 2: 转换失败 -->
+                            <span
+                                :class="{
+                                    success: scope.row.state === 1,
+                                    faile: scope.row.state === 2,
+                                }"
+                                >{{
+                                    scope.row.state === 0
+                                        ? t('waiting')
+                                        : scope.row.state === 1
+                                        ? t('success')
+                                        : t('faile')
+                                }}</span
+                            >
                         </template>
                     </el-table-column>
                     <el-table-column
@@ -115,7 +128,7 @@
                             <el-button
                                 :disabled="btnDisabled"
                                 v-if="scope.row.state === 1"
-                                @click="runCommand('--version')"
+                                @click="openDir(outputDir)"
                             >
                                 <el-icon><Document /></el-icon>
                             </el-button>
@@ -231,19 +244,6 @@ const openDir = (dir: string) => {
     }
 }
 
-// run help
-const runHelp = async () => {
-    try {
-        const command = await invoke('run_command', {
-            command:
-                'D:\\ShenProject\\TauriMan\\src-tauri\\config\\bin\\fnm.exe --version',
-        })
-        console.log('run_command------', command)
-    } catch (error) {
-        console.error('执行命令失败', error)
-    }
-}
-
 // 执行命令
 const runCommand = async (command: string) => {
     try {
@@ -251,14 +251,33 @@ const runCommand = async (command: string) => {
         // const rockcamrun = await join(currentDir, 'config', 'bin', 'fnm')
         const rockcamrun = await join(currentDir, 'config', 'bin', 'rockcamrun')
         console.log('rockcamrun------', rockcamrun)
-        const result = await invoke('run_command', {
+        const result: string = await invoke('run_command', {
             command: `${rockcamrun} ${command}`,
         })
         console.log('run_command------', result)
-        return true
+        if (
+            result &&
+            (result.includes('copied') || result.includes('--help'))
+        ) {
+            return true
+        } else {
+            return false
+        }
     } catch (error) {
         console.error('执行命令失败', error)
         return false
+    }
+}
+
+// run help
+const runHelp = async () => {
+    const check = await runCommand('--help')
+    if (check) {
+        console.log('执行帮助命令成功')
+    } else {
+        console.error('执行帮助命令失败')
+        ElMessage.error('没有检测到 rockcamrun 程序，请检查安装')
+        btnDisabled.value = true
     }
 }
 
@@ -383,9 +402,10 @@ const disableRightClick = () => {
     }
 }
 
-onMounted(() => {
+onMounted(async () => {
     console.log('mounted')
-    initLang()
+    await initLang()
+    await runHelp()
     !import.meta.env.DEV && disableRightClick()
     inputDir.value && readDir(inputDir.value)
 })
@@ -498,5 +518,13 @@ onMounted(() => {
             }
         }
     }
+}
+
+.success {
+    color: #67c23a;
+}
+
+.faile {
+    color: #f56c6c;
 }
 </style>
