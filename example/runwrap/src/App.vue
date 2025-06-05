@@ -360,6 +360,7 @@ const transFile = async (file: any, isBundle: boolean = false) => {
 // 批量执行命令
 const runBundleCmd = async () => {
     console.log('批量执行命令')
+    await writeLog('批量执行命令.....')
     if (!inputDir.value || !outputDir.value) {
         ElMessage.error('请先选择输入和输出文件夹')
         return
@@ -369,6 +370,7 @@ const runBundleCmd = async () => {
         await transFile(item, true)
     }
     transLoading.value = false
+    await writeLog('批量执行命令完成')
     ElMessage.success('批量转换完成')
 }
 
