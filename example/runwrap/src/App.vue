@@ -22,7 +22,7 @@
                     </span>
                 </div>
                 <div class="inputBox">
-                    <el-button class="inputBtn" @click="selectDir('inputDir')">
+                    <el-button class="inputBtn" @click="selectDir('outputDir')">
                         {{ t('outputDir') }}
                     </el-button>
                     <el-input
@@ -66,8 +66,8 @@
                     <el-table-column
                         prop="size"
                         :label="t('size')"
+                        width="110"
                         sortable
-                        width="100"
                     />
                     <el-table-column
                         prop="update"
@@ -177,8 +177,9 @@ import { useI18n } from 'vue-i18n'
 import VConsole from 'vconsole'
 import { join } from '@tauri-apps/api/path'
 import { ElMessage } from 'element-plus'
-import { exists, writeTextFile } from '@tauri-apps/plugin-fs'
+import { writeTextFile } from '@tauri-apps/plugin-fs'
 import i18n from '@/lang'
+import { load } from '@tauri-apps/plugin-store'
 
 // 转换loading
 const transLoading = ref(false)
@@ -186,6 +187,7 @@ const transLoading = ref(false)
 const { t } = useI18n()
 // exe dir
 const exeDir = ref('')
+let store: any = null
 
 // 输入文件夹
 const inputDir = ref(localStorage.getItem('inputDir') || '')
@@ -200,18 +202,20 @@ const tableData = ref<any[]>([])
 const transLog = ref<any[]>([])
 
 // 选择文件夹
-const selectDir = (type: string) => {
+const selectDir = async (type: string) => {
     open({
         directory: true,
-    }).then((res) => {
+    }).then(async (res) => {
         console.log('选择文件夹', res)
         if (type === 'inputDir') {
             inputDir.value = res || ''
-            localStorage.setItem('inputDir', inputDir.value)
+            // localStorage.setItem('inputDir', inputDir.value)
+            store && (await store.set('inputDir', { value: inputDir.value }))
             res && readDir(res)
         } else {
             outputDir.value = res || ''
-            localStorage.setItem('outputDir', outputDir.value)
+            // localStorage.setItem('outputDir', outputDir.value)
+            store && (await store.set('outputDir', { value: outputDir.value }))
         }
     })
 }
@@ -288,6 +292,7 @@ const writeLog = async (log: string, append: boolean = true) => {
 
 // run help
 const initEnv = async () => {
+    store = await load('store.json', { autoSave: true })
     // 获取exe文件夹
     exeDir.value = await invoke('get_exe_dir')
     // 检查是否存在rockcamrun
@@ -299,8 +304,13 @@ const initEnv = async () => {
         ElMessage.error('没有检测到 rockcamrun 程序，请检查安装')
         btnDisabled.value = true
     }
-    // 检查log是否存在
-    await writeLog('init log file', false)
+    // 检查是否存在日志文件
+    await writeLog('', false)
+    // 初始化输入输出目录
+    inputDir.value = ((await store.get('inputDir')) || { value: '' }).value
+    outputDir.value = ((await store.get('outputDir')) || { value: '' }).value
+    console.log('inputDir', inputDir.value, 'outputDir', outputDir.value)
+    inputDir.value && readDir(inputDir.value)
 }
 
 // 执行转换文件逻辑
@@ -315,7 +325,7 @@ const transFile = async (file: any, isBundle: boolean = false) => {
     btnDisabled.value = true
     // 记录日志:开始时间，结束时间，文件名，状态
     let logString = ''
-    logString += `开始时间: ${new Date().toLocaleString()}\n`
+    logString += `开始时间: ${new Date().toLocaleString()}，`
     try {
         const inputFilePath = await join(inputDir.value, fileName)
         console.log(
@@ -330,16 +340,16 @@ const transFile = async (file: any, isBundle: boolean = false) => {
         )
         if (result) {
             // 记录成功信息
-            logString += `文件 ${fileName} 转换成功\n`
+            logString += `文件 ${fileName} 转换成功，`
             file.state = 1
         } else {
             // 记录错误信息
-            logString += `文件 ${fileName} 转换失败\n`
+            logString += `文件 ${fileName} 转换失败，`
             file.state = 2
         }
     } catch (error) {
         // 记录错误信息
-        logString += `文件 ${fileName} 转换失败\n，失败原因：${error}\n`
+        logString += `文件 ${fileName} 转换失败，失败原因：${error}，`
         console.error('执行命令失败', error)
         ElMessage.error(`执行命令失败: ${error}`)
         file.state = 2
@@ -349,7 +359,7 @@ const transFile = async (file: any, isBundle: boolean = false) => {
         } else {
             transLoading.value = false
         }
-        logString += `结束时间: ${new Date().toLocaleString()}\n`
+        logString += `结束时间: ${new Date().toLocaleString()}\r`
         transLog.value.push(logString)
         await writeLog(logString)
         btnDisabled.value = false
@@ -430,11 +440,9 @@ const disableRightClick = () => {
 }
 
 onMounted(async () => {
-    console.log('mounted')
+    console.log('mounted------', inputDir.value, outputDir.value)
     await initLang()
     await initEnv()
-    !import.meta.env.DEV && disableRightClick()
-    inputDir.value && readDir(inputDir.value)
 })
 </script>
 
