@@ -443,6 +443,8 @@ onMounted(async () => {
     console.log('mounted------', inputDir.value, outputDir.value)
     await initLang()
     await initEnv()
+    // 禁用右键
+    !import.meta.env.DEV && disableRightClick()
 })
 </script>
 
