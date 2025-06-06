@@ -129,8 +129,11 @@
                         <template #default="scope">
                             <el-button
                                 :disabled="btnDisabled"
-                                v-if="scope.row.state === 1"
-                                @click="openDir(outputDir)"
+                                v-if="
+                                    scope.row.state === 1 ||
+                                    scope.row.state === 2
+                                "
+                                @click="openLogFile(scope.row.name)"
                             >
                                 <el-icon><Document /></el-icon>
                             </el-button>
@@ -261,7 +264,7 @@ const openDir = (dir: string) => {
 }
 
 // 执行命令
-const runCommand = async (command: string) => {
+const runCommand = async (fileName: string, command: string) => {
     try {
         // const rockcamrun = await join(currentDir, 'config', 'bin', 'fnm')
         const rockcamrun = await join(exeDir.value, 'rockcamrun')
@@ -270,6 +273,7 @@ const runCommand = async (command: string) => {
             command: `${rockcamrun} ${command}`,
         })
         console.log('run_command------', result)
+        await writeLog(fileName, result)
         if (
             result &&
             (result.includes('copied') || result.includes('--help'))
@@ -280,14 +284,28 @@ const runCommand = async (command: string) => {
         }
     } catch (error) {
         console.error('执行命令失败', error)
+        await writeLog(fileName, JSON.stringify(error))
         return false
     }
 }
 
 // 写入日志
-const writeLog = async (log: string, append: boolean = true) => {
-    const logPath = await join(exeDir.value, 'log.txt')
+const writeLog = async (
+    fileName: string,
+    log: string,
+    append: boolean = false
+) => {
+    const logPath = await join(exeDir.value, 'logs', `${fileName}.txt`)
     await writeTextFile(logPath, log, { append })
+}
+
+// 用记事本打开log文件
+const openLogFile = async (fileName: string) => {
+    const logPath = await join(exeDir.value, 'logs', `${fileName}.txt`)
+    console.log('打开日志文件', logPath)
+    await invoke('run_command', {
+        command: `Start-Process -FilePath "${logPath}"`,
+    })
 }
 
 // run help
@@ -296,7 +314,7 @@ const initEnv = async () => {
     // 获取exe文件夹
     exeDir.value = await invoke('get_exe_dir')
     // 检查是否存在rockcamrun
-    const check = await runCommand('--help')
+    const check = await runCommand('programe-init', '--help')
     if (check) {
         console.log('执行帮助命令成功')
     } else {
@@ -304,8 +322,6 @@ const initEnv = async () => {
         ElMessage.error('没有检测到 rockcamrun 程序，请检查安装')
         btnDisabled.value = true
     }
-    // 检查是否存在日志文件
-    await writeLog('', false)
     // 初始化输入输出目录
     inputDir.value = ((await store.get('inputDir')) || { value: '' }).value
     outputDir.value = ((await store.get('outputDir')) || { value: '' }).value
@@ -323,9 +339,10 @@ const transFile = async (file: any, isBundle: boolean = false) => {
     }
     transLoading.value = true
     btnDisabled.value = true
-    // 记录日志:开始时间，结束时间，文件名，状态
+    // 记录日志:开始时间，结束时间，文件名，状态，持续时间
+    let startTime = new Date().getTime()
     let logString = ''
-    logString += `开始时间: ${new Date().toLocaleString()}，`
+    logString += `开始时间: ${startTime.toLocaleString()}，`
     try {
         const inputFilePath = await join(inputDir.value, fileName)
         console.log(
@@ -336,6 +353,7 @@ const transFile = async (file: any, isBundle: boolean = false) => {
         )
         loadingText(`正在转换文件 ${fileName}...`)
         const result = await runCommand(
+            fileName,
             `-i "${inputFilePath}" -o ${outputDir.value}`
         )
         if (result) {
@@ -359,9 +377,13 @@ const transFile = async (file: any, isBundle: boolean = false) => {
         } else {
             transLoading.value = false
         }
-        logString += `结束时间: ${new Date().toLocaleString()}\r`
+        let endTime = new Date().getTime()
+        // 持续时间是多少分多少秒
+        logString += `结束时间: ${endTime.toLocaleString()}，`
+        logString += `持续时间: ${Math.floor(
+            (endTime - startTime) / 60000
+        )}分${Math.floor(((endTime - startTime) % 60000) / 1000)}秒\r`
         transLog.value.push(logString)
-        await writeLog(logString)
         btnDisabled.value = false
         console.log('执行命令完成', transLog.value)
     }
@@ -370,7 +392,6 @@ const transFile = async (file: any, isBundle: boolean = false) => {
 // 批量执行命令
 const runBundleCmd = async () => {
     console.log('批量执行命令')
-    await writeLog('批量执行命令.....')
     if (!inputDir.value || !outputDir.value) {
         ElMessage.error('请先选择输入和输出文件夹')
         return
@@ -380,7 +401,6 @@ const runBundleCmd = async () => {
         await transFile(item, true)
     }
     transLoading.value = false
-    await writeLog('批量执行命令完成')
     ElMessage.success('批量转换完成')
 }
 
