@@ -66,8 +66,8 @@
                     <el-table-column
                         prop="size"
                         :label="t('size')"
+                        width="110"
                         sortable
-                        width="100"
                     />
                     <el-table-column
                         prop="update"
