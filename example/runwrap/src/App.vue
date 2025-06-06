@@ -177,8 +177,9 @@ import { useI18n } from 'vue-i18n'
 import VConsole from 'vconsole'
 import { join } from '@tauri-apps/api/path'
 import { ElMessage } from 'element-plus'
-import { exists, writeTextFile } from '@tauri-apps/plugin-fs'
+import { writeTextFile } from '@tauri-apps/plugin-fs'
 import i18n from '@/lang'
+import { load } from '@tauri-apps/plugin-store'
 
 // 转换loading
 const transLoading = ref(false)
@@ -186,6 +187,7 @@ const transLoading = ref(false)
 const { t } = useI18n()
 // exe dir
 const exeDir = ref('')
+let store: any = null
 
 // 输入文件夹
 const inputDir = ref(localStorage.getItem('inputDir') || '')
@@ -200,18 +202,20 @@ const tableData = ref<any[]>([])
 const transLog = ref<any[]>([])
 
 // 选择文件夹
-const selectDir = (type: string) => {
+const selectDir = async (type: string) => {
     open({
         directory: true,
-    }).then((res) => {
+    }).then(async (res) => {
         console.log('选择文件夹', res)
         if (type === 'inputDir') {
             inputDir.value = res || ''
-            localStorage.setItem('inputDir', inputDir.value)
+            // localStorage.setItem('inputDir', inputDir.value)
+            store && (await store.set('inputDir', { value: inputDir.value }))
             res && readDir(res)
         } else {
             outputDir.value = res || ''
-            localStorage.setItem('outputDir', outputDir.value)
+            // localStorage.setItem('outputDir', outputDir.value)
+            store && (await store.set('outputDir', { value: outputDir.value }))
         }
     })
 }
@@ -288,6 +292,7 @@ const writeLog = async (log: string, append: boolean = true) => {
 
 // run help
 const initEnv = async () => {
+    store = await load('store.json', { autoSave: true })
     // 获取exe文件夹
     exeDir.value = await invoke('get_exe_dir')
     // 检查是否存在rockcamrun
@@ -301,6 +306,11 @@ const initEnv = async () => {
     }
     // 检查是否存在日志文件
     await writeLog('', false)
+    // 初始化输入输出目录
+    inputDir.value = ((await store.get('inputDir')) || { value: '' }).value
+    outputDir.value = ((await store.get('outputDir')) || { value: '' }).value
+    console.log('inputDir', inputDir.value, 'outputDir', outputDir.value)
+    inputDir.value && readDir(inputDir.value)
 }
 
 // 执行转换文件逻辑
@@ -430,11 +440,9 @@ const disableRightClick = () => {
 }
 
 onMounted(async () => {
-    console.log('mounted')
+    console.log('mounted------', inputDir.value, outputDir.value)
     await initLang()
     await initEnv()
-    !import.meta.env.DEV && disableRightClick()
-    inputDir.value && readDir(inputDir.value)
 })
 </script>
 
