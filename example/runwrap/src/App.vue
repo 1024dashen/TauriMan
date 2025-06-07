@@ -210,6 +210,9 @@ const selectDir = async (type: string) => {
         directory: true,
     }).then(async (res) => {
         console.log('选择文件夹', res)
+        if (res === null || res === undefined) {
+            return
+        }
         if (type === 'inputDir') {
             inputDir.value = res || ''
             // localStorage.setItem('inputDir', inputDir.value)
