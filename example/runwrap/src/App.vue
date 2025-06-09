@@ -1,10 +1,5 @@
 <template>
-    <div
-        class="container"
-        id="app"
-        v-loading.fullscreen.lock="transLoading"
-        element-loading-text="转换中"
-    >
+    <div class="container" id="app">
         <!-- header -->
         <div class="header">
             <div class="headerLeft">
@@ -56,7 +51,6 @@
                         class="selectBox"
                         style="width: 240px"
                         @change="batchUpdatePolicy"
-
                     >
                         <el-option
                             v-for="item in planOptions"
@@ -234,6 +228,40 @@
             </el-scrollbar>
         </div>
     </div>
+
+    <!-- 全局loading -->
+    <el-dialog
+        v-model="transLoading"
+        fullscreen
+        :show-close="false"
+        class="buildDialog"
+    >
+        <div class="transLoading">
+            <div class="loadingContainer">
+                <div class="elLoadingSpinner">
+                    <svg class="circular" viewBox="25 25 50 50">
+                        <circle
+                            class="path"
+                            cx="50"
+                            cy="50"
+                            r="20"
+                            fill="none"
+                        ></circle>
+                    </svg>
+                </div>
+            </div>
+            <div class="loadingText">正在转换文件...</div>
+            <el-button
+                class="stopBtn"
+                @click="stopTrans"
+                size="default"
+                type="danger"
+                plain
+            >
+                停止执行
+            </el-button>
+        </div>
+    </el-dialog>
 </template>
 
 <script setup lang="ts">
@@ -250,7 +278,7 @@ import i18n from '@/lang'
 import { load } from '@tauri-apps/plugin-store'
 
 // 转换loading
-const transLoading = ref(false)
+const transLoading = ref(true)
 // 国际化
 const { t } = useI18n()
 // exe dir
@@ -341,7 +369,15 @@ const batchUpdatePolicy = () => {
 // 批量删除选中
 const batchDelete = () => {
     console.log('批量删除选中', selectedRows.value)
-    tableData.value = tableData.value.filter((item) => !selectedRows.value.includes(item))
+    tableData.value = tableData.value.filter(
+        (item) => !selectedRows.value.includes(item)
+    )
+}
+
+// stopTrans
+const stopTrans = () => {
+    console.log('停止转换')
+    transLoading.value = false
 }
 
 // 模糊搜索过滤表格数据
@@ -766,5 +802,71 @@ onMounted(async () => {
 
 .faile {
     color: #f56c6c;
+}
+
+.transLoading {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
+
+    .loadingContainer {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .elLoadingSpinner {
+        position: relative;
+        width: 50px;
+        height: 50px;
+    }
+
+    .loadingText {
+        margin-top: 1.25rem;
+        font-size: 1.25rem;
+        color: #409eff;
+    }
+
+    .stopBtn {
+        margin-top: 1.25rem;
+    }
+
+    .elLoadingSpinner .circular {
+        width: 100%;
+        height: 100%;
+        animation: loading-rotate 2s linear infinite;
+    }
+
+    .elLoadingSpinner .path {
+        animation: loading-dash 1.5s ease-in-out infinite;
+        stroke-dasharray: 90, 150;
+        stroke-dashoffset: 0;
+        stroke-width: 2;
+        stroke: #409eff;
+        stroke-linecap: round;
+    }
+
+    @keyframes loading-rotate {
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    @keyframes loading-dash {
+        0% {
+            stroke-dasharray: 1, 200;
+            stroke-dashoffset: 0;
+        }
+        50% {
+            stroke-dasharray: 90, 150;
+            stroke-dashoffset: -40px;
+        }
+        100% {
+            stroke-dasharray: 90, 150;
+            stroke-dashoffset: -120px;
+        }
+    }
 }
 </style>
