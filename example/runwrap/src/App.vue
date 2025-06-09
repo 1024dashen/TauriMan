@@ -34,6 +34,40 @@
                         {{ t('check') }}
                     </span>
                 </div>
+                <!-- tool -->
+                <div class="toolBox">
+                    <!-- 搜索 -->
+                    <el-input
+                        v-model="inputDir"
+                        class="searchInput"
+                        placeholder=""
+                    />
+                    <el-button
+                        class="searchBtn"
+                        @click="selectDir('outputDir')"
+                    >
+                        文件搜索
+                    </el-button>
+                    <!-- 删除选中 -->
+                    <div class="toolTitle">加工策略</div>
+                    <el-select
+                        v-model="value"
+                        placeholder=""
+                        size="small"
+                        class="selectBox"
+                        style="width: 240px"
+                    >
+                        <el-option
+                            v-for="item in options"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                        />
+                    </el-select>
+                    <el-button class="inputBtn" @click="selectDir('outputDir')">
+                        删除选中
+                    </el-button>
+                </div>
             </div>
             <div class="headerRight">
                 <el-button
@@ -45,6 +79,7 @@
                 </el-button>
             </div>
         </div>
+
         <!-- content -->
         <div class="content">
             <div class="contentLeft">
@@ -56,6 +91,7 @@
                     :empty-text="t('empty')"
                     :scrollbar-always-on="false"
                 >
+                    <el-table-column type="selection" width="30" />
                     <el-table-column
                         prop="index"
                         :label="t('index')"
@@ -76,6 +112,28 @@
                         align="center"
                         sortable
                     />
+                    <el-table-column
+                        prop="action"
+                        label="加工策略"
+                        width="80"
+                        align="center"
+                    >
+                        <template #default="scope">
+                            <el-select
+                                v-model="value"
+                                placeholder=""
+                                size="small"
+                                class="selectBox"
+                            >
+                                <el-option
+                                    v-for="item in options"
+                                    :key="item.value"
+                                    :label="item.label"
+                                    :value="item.value"
+                                />
+                            </el-select>
+                        </template>
+                    </el-table-column>
                     <el-table-column
                         prop="action"
                         :label="t('action')"
@@ -200,9 +258,63 @@ const outputDir = ref(localStorage.getItem('outputDir') || '')
 const btnDisabled = ref(false)
 
 // 表格数据
-const tableData = ref<any[]>([])
+const tableData = ref<any[]>([
+    {
+        index: 1,
+        name: 'test.prt',
+        size: '100KB',
+        update: '2021-01-01 12:00:00',
+        state: 0,
+    },
+    {
+        index: 2,
+        name: 'test.stp',
+        size: '100KB',
+        update: '2021-01-01 12:00:00',
+        state: 0,
+    },
+    {
+        index: 3,
+        name: 'test.x_t',
+        size: '100KB',
+        update: '2021-01-01 12:00:00',
+        state: 0,
+    },
+    {
+        index: 4,
+        name: 'test.x_t',
+        size: '100KB',
+        update: '2021-01-01 12:00:00',
+        state: 0,
+    },
+])
 // 日志
 const transLog = ref<any[]>([])
+
+// 加工策略
+const value = ref('')
+const options = [
+    {
+        value: 'Option1',
+        label: 'Option1',
+    },
+    {
+        value: 'Option2',
+        label: 'Option2',
+    },
+    {
+        value: 'Option3',
+        label: 'Option3',
+    },
+    {
+        value: 'Option4',
+        label: 'Option4',
+    },
+    {
+        value: 'Option5',
+        label: 'Option5',
+    },
+]
 
 // 选择文件夹
 const selectDir = async (type: string) => {
@@ -481,12 +593,12 @@ onMounted(async () => {
     overflow: hidden;
 
     .header {
-        height: 3.125rem;
+        height: 7rem;
         display: flex;
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
-        padding: 1.25rem;
+        padding: 1.25rem 1.25rem 0 1.25rem;
         gap: 1.25rem;
 
         .headerLeft {
@@ -516,6 +628,27 @@ onMounted(async () => {
                     // text-decoration: underline;
                 }
             }
+
+            .toolBox {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+
+                .searchBtn {
+                    margin: 0 0.625rem;
+                }
+
+                .toolTitle {
+                    width: 6rem;
+                    font-size: 0.75rem;
+                }
+
+                .selectBox {
+                    width: 10rem;
+                    margin: 0 0.625rem;
+                }
+            }
         }
 
         .headerRight {
@@ -528,7 +661,7 @@ onMounted(async () => {
 
             .batchBtn {
                 width: 100%;
-                height: 100%;
+                height: 90%;
             }
         }
     }
