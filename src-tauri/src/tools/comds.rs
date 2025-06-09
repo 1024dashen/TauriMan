@@ -30,11 +30,6 @@ pub fn load_man(base_dir: &str) -> Result<String, io::Error> {
 
 #[tauri::command]
 pub fn get_env_var(name: String) -> Result<String, String> {
-    println!("get_env_var: {}", name);
-    println!("All environment variables:");
-    for (key, value) in env::vars() {
-        println!("{}: {}", key, value);
-    }
     std::env::var(name).map_err(|e| e.to_string())
 }
 

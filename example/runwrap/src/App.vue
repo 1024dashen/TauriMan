@@ -41,7 +41,6 @@
                     <el-button class="searchBtn" @click="search(searchValue)">
                         文件搜索
                     </el-button>
-                    <!-- 删除选中 -->
                     <div class="toolTitle">加工策略</div>
                     <el-select
                         v-model="plan"
@@ -59,10 +58,13 @@
                             :value="item.value"
                         />
                     </el-select>
+                    <!-- 删除选中 -->
                     <el-button
                         :disabled="selectedRows.length === 0"
                         class="inputBtn"
                         @click="batchDelete"
+                        type="danger"
+                        plain
                     >
                         删除选中
                     </el-button>
@@ -641,9 +643,6 @@ const getEnvVar = async () => {
     const envVar = await invoke('get_env_var', {
         name: 'UGII_LANG',
     })
-    // const result: string = await invoke('run_command', {
-    //     command: 'echo $UGII_LANG',
-    // })
     console.log('envVar---', envVar)
 }
 
