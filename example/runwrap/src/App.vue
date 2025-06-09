@@ -502,27 +502,6 @@ const openLogFile = async (fileName: string) => {
     })
 }
 
-// run help
-const initEnv = async () => {
-    store = await load('store.json', { autoSave: true })
-    // 获取exe文件夹
-    exeDir.value = await invoke('get_exe_dir')
-    // 检查是否存在rockcamrun
-    const check = await runCommand('programe-init', '--help')
-    if (check) {
-        console.log('执行帮助命令成功')
-    } else {
-        console.error('执行帮助命令失败')
-        ElMessage.error('没有检测到 rockcamrun 程序，请检查安装')
-        btnDisabled.value = true
-    }
-    // 初始化输入输出目录
-    inputDir.value = ((await store.get('inputDir')) || { value: '' }).value
-    outputDir.value = ((await store.get('outputDir')) || { value: '' }).value
-    console.log('inputDir', inputDir.value, 'outputDir', outputDir.value)
-    inputDir.value && readDir(inputDir.value)
-}
-
 // 执行转换文件逻辑
 const transFile = async (file: any, isBundle: boolean = false) => {
     const fileName = file.name
@@ -655,10 +634,45 @@ const disableRightClick = () => {
     }
 }
 
+
+// 获取环境变量
+const getEnvVar = async () => {
+    console.log('getEnvVar------')
+    const envVar = await invoke('get_env_var', {
+        name: 'UGII_LANG',
+    })
+    // const result: string = await invoke('run_command', {
+    //     command: 'echo $UGII_LANG',
+    // })
+    console.log('envVar---', envVar)
+}
+
+// run help
+const initEnv = async () => {
+    store = await load('store.json', { autoSave: true })
+    // 获取exe文件夹
+    exeDir.value = await invoke('get_exe_dir')
+    // 检查是否存在rockcamrun
+    const check = await runCommand('programe-init', '--help')
+    if (check) {
+        console.log('执行帮助命令成功')
+    } else {
+        console.error('执行帮助命令失败')
+        ElMessage.error('没有检测到 rockcamrun 程序，请检查安装')
+        btnDisabled.value = true
+    }
+    // 初始化输入输出目录
+    inputDir.value = ((await store.get('inputDir')) || { value: '' }).value
+    outputDir.value = ((await store.get('outputDir')) || { value: '' }).value
+    console.log('inputDir', inputDir.value, 'outputDir', outputDir.value)
+    inputDir.value && readDir(inputDir.value)
+}
+
 onMounted(async () => {
     console.log('mounted------', inputDir.value, outputDir.value)
     await initLang()
     // await initEnv()
+    await getEnvVar()
     // 禁用右键
     !import.meta.env.DEV && disableRightClick()
 })
