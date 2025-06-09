@@ -38,33 +38,38 @@
                 <div class="toolBox">
                     <!-- 搜索 -->
                     <el-input
-                        v-model="inputDir"
+                        v-model="searchValue"
                         class="searchInput"
-                        placeholder=""
+                        placeholder="请输入搜索关键词"
+                        @keyup.enter="search(searchValue)"
                     />
-                    <el-button
-                        class="searchBtn"
-                        @click="selectDir('outputDir')"
-                    >
+                    <el-button class="searchBtn" @click="search(searchValue)">
                         文件搜索
                     </el-button>
                     <!-- 删除选中 -->
                     <div class="toolTitle">加工策略</div>
                     <el-select
-                        v-model="value"
+                        v-model="plan"
                         placeholder=""
+                        :disabled="selectedRows.length === 0"
                         size="small"
                         class="selectBox"
                         style="width: 240px"
+                        @change="batchUpdatePolicy"
+
                     >
                         <el-option
-                            v-for="item in options"
+                            v-for="item in planOptions"
                             :key="item.value"
                             :label="item.label"
                             :value="item.value"
                         />
                     </el-select>
-                    <el-button class="inputBtn" @click="selectDir('outputDir')">
+                    <el-button
+                        :disabled="selectedRows.length === 0"
+                        class="inputBtn"
+                        @click="batchDelete"
+                    >
                         删除选中
                     </el-button>
                 </div>
@@ -72,7 +77,7 @@
             <div class="headerRight">
                 <el-button
                     @click="runBundleCmd"
-                    :disabled="btnDisabled"
+                    :disabled="btnDisabled || selectedRows.length === 0"
                     class="batchBtn"
                 >
                     {{ t('start') }}
@@ -88,8 +93,10 @@
                     height="100%"
                     border
                     class="tableBox"
+                    row-key="index"
                     :empty-text="t('empty')"
                     :scrollbar-always-on="false"
+                    @selection-change="batchSelect"
                 >
                     <el-table-column type="selection" width="30" />
                     <el-table-column
@@ -120,13 +127,13 @@
                     >
                         <template #default="scope">
                             <el-select
-                                v-model="value"
+                                v-model="scope.row.policy"
                                 placeholder=""
                                 size="small"
                                 class="selectBox"
                             >
                                 <el-option
-                                    v-for="item in options"
+                                    v-for="item in planOptions"
                                     :key="item.value"
                                     :label="item.label"
                                     :value="item.value"
@@ -257,64 +264,98 @@ const outputDir = ref(localStorage.getItem('outputDir') || '')
 // 按钮状态是否可用
 const btnDisabled = ref(false)
 
-// 表格数据
-const tableData = ref<any[]>([
+// 原始表格数据
+const sourceData = ref<any[]>([
     {
         index: 1,
-        name: 'test.prt',
+        name: '第一个001.prt',
         size: '100KB',
         update: '2021-01-01 12:00:00',
         state: 0,
+        policy: 0,
     },
     {
         index: 2,
-        name: 'test.stp',
+        name: '第二季002.stp',
         size: '100KB',
         update: '2021-01-01 12:00:00',
         state: 0,
+        policy: 0,
     },
     {
         index: 3,
-        name: 'test.x_t',
+        name: '第三季003.x_t',
         size: '100KB',
         update: '2021-01-01 12:00:00',
         state: 0,
+        policy: 0,
     },
     {
         index: 4,
-        name: 'test.x_t',
+        name: '第四季004.x_t',
         size: '100KB',
         update: '2021-01-01 12:00:00',
         state: 0,
+        policy: 0,
     },
 ])
+
+// 表格数据
+const tableData = ref<any[]>(sourceData.value)
+
 // 日志
 const transLog = ref<any[]>([])
 
 // 加工策略
-const value = ref('')
-const options = [
+const plan = ref(1)
+const planOptions = [
     {
-        value: 'Option1',
-        label: 'Option1',
+        value: 0,
+        label: '钢',
     },
     {
-        value: 'Option2',
-        label: 'Option2',
+        value: 1,
+        label: '铝',
     },
     {
-        value: 'Option3',
-        label: 'Option3',
-    },
-    {
-        value: 'Option4',
-        label: 'Option4',
-    },
-    {
-        value: 'Option5',
-        label: 'Option5',
+        value: 2,
+        label: '铜',
     },
 ]
+
+// 批量选中操作
+const selectedRows = ref<any[]>([])
+const batchSelect = (rows: any[]) => {
+    console.log('批量选中操作', rows)
+    selectedRows.value = rows
+}
+
+// 批量修改加工策略
+const batchUpdatePolicy = () => {
+    console.log('批量修改加工策略', selectedRows.value)
+    selectedRows.value.forEach((item) => {
+        item.policy = plan.value
+    })
+}
+
+// 批量删除选中
+const batchDelete = () => {
+    console.log('批量删除选中', selectedRows.value)
+    tableData.value = tableData.value.filter((item) => !selectedRows.value.includes(item))
+}
+
+// 模糊搜索过滤表格数据
+const searchValue = ref('')
+const search = (value: string) => {
+    console.log('模糊搜索', value)
+    if (value === '') {
+        tableData.value = sourceData.value
+    } else {
+        tableData.value = sourceData.value.filter((item) =>
+            item.name.includes(value)
+        )
+    }
+}
 
 // 选择文件夹
 const selectDir = async (type: string) => {
@@ -347,7 +388,7 @@ const readDir = async (dir: string) => {
     console.log('读取文件夹结果', res)
     let index = 1
     // state 0: 未转换 1: 转换成功 2: 转换失败, 只获取文件名后缀为.prt .stp .x_t的文件
-    tableData.value = res
+    sourceData.value = res
         .map((item: any) => ({
             ...item,
             index: index++,
@@ -360,6 +401,8 @@ const readDir = async (dir: string) => {
                 item.name.endsWith('.stp') ||
                 item.name.endsWith('.x_t')
         )
+    // 表格数据
+    tableData.value = sourceData.value
 }
 
 // 打开文件夹
@@ -524,6 +567,7 @@ const deleteRow = (index: number) => {
     tableData.value.splice(index, 1)
 }
 
+// 初始化语言
 const initLang = async () => {
     try {
         const manStr: string = await invoke('get_man')
@@ -539,6 +583,7 @@ const initLang = async () => {
     }
 }
 
+// 禁用右键
 const disableRightClick = () => {
     //禁止F12
     document.onkeydown = function (event: any) {
@@ -577,7 +622,7 @@ const disableRightClick = () => {
 onMounted(async () => {
     console.log('mounted------', inputDir.value, outputDir.value)
     await initLang()
-    await initEnv()
+    // await initEnv()
     // 禁用右键
     !import.meta.env.DEV && disableRightClick()
 })
@@ -642,6 +687,8 @@ onMounted(async () => {
                 .toolTitle {
                     width: 6rem;
                     font-size: 0.75rem;
+                    color: #4f5154;
+                    font-weight: 600;
                 }
 
                 .selectBox {
