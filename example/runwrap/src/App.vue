@@ -724,7 +724,6 @@ onMounted(async () => {
                     width: 6rem;
                     font-size: 0.75rem;
                     color: #4f5154;
-                    font-weight: 600;
                 }
 
                 .selectBox {
