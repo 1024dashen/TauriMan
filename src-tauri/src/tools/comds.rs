@@ -29,6 +29,11 @@ pub fn load_man(base_dir: &str) -> Result<String, io::Error> {
 }
 
 #[tauri::command]
+pub fn get_env_var(name: String) -> Result<String, String> {
+    std::env::var(name).map_err(|e| e.to_string())
+}
+
+#[tauri::command]
 pub async fn run_command(command: String) -> Result<String, String> {
     #[cfg(target_os = "windows")]
     let output = tokio::process::Command::new("powershell")
@@ -51,7 +56,6 @@ pub async fn run_command(command: String) -> Result<String, String> {
         Err(String::from_utf8_lossy(&output.stderr).to_string())
     }
 }
-
 
 #[tauri::command]
 pub fn read_dir(path: String) -> Result<Vec<FileInfo>, String> {

@@ -20,6 +20,7 @@ pub fn run() {
             tools::comds::open_folder,
             tools::comds::read_dir,
             tools::comds::run_command,
+            tools::comds::get_env_var,
         ])
         .setup(|app| {
             tauri::async_runtime::block_on(async move {
