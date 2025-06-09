@@ -30,33 +30,28 @@ pub fn load_man(base_dir: &str) -> Result<String, io::Error> {
 
 #[tauri::command]
 pub async fn run_command(command: String) -> Result<String, String> {
-    let output = if cfg!(target_os = "windows") {
-        tokio::process::Command::new("powershell")
-            .arg("-Command")
-            .arg(&command)
-            .creation_flags(0x08000000)
-            .output()
-            .await
-            .map_err(|e| e.to_string())?
-    } else {
-        tokio::process::Command::new("sh")
-            .arg("-c")
-            .arg(&command)
-            .output()
-            .await
-            .map_err(|e| e.to_string())?
-    };
-
+    #[cfg(target_os = "windows")]
+    let output = tokio::process::Command::new("powershell")
+        .arg("-Command")
+        .arg(&command)
+        .creation_flags(0x08000000)
+        .output()
+        .await
+        .map_err(|e| e.to_string())?;
+    #[cfg(not(target_os = "windows"))]
+    let output = tokio::process::Command::new("sh")
+        .arg("-c")
+        .arg(&command)
+        .output()
+        .await
+        .map_err(|e| e.to_string())?;
     if output.status.success() {
-        // print!("Command executed successfully: {}", command);
-        // println!("Output: {}", String::from_utf8_lossy(&output.stdout));
         Ok(String::from_utf8_lossy(&output.stdout).to_string())
     } else {
-        // print!("Command failed: {}", command);
-        // println!("Error: {}", String::from_utf8_lossy(&output.stderr));
         Err(String::from_utf8_lossy(&output.stderr).to_string())
     }
 }
+
 
 #[tauri::command]
 pub fn read_dir(path: String) -> Result<Vec<FileInfo>, String> {
