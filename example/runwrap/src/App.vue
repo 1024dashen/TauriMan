@@ -36,19 +36,15 @@
                         v-model="searchValue"
                         class="searchInput"
                         placeholder="请输入搜索关键词"
-                        @keyup.enter="search(searchValue)"
+                        @input="search"
                     />
-                    <el-button class="searchBtn" @click="search(searchValue)">
-                        文件搜索
-                    </el-button>
-                    <div class="toolTitle">加工策略</div>
                     <el-select
+                        v-if="selectedRows.length > 0"
                         v-model="plan"
                         placeholder=""
                         :disabled="selectedRows.length === 0"
                         size="small"
                         class="selectBox"
-                        style="width: 240px"
                         @change="batchUpdatePolicy"
                     >
                         <el-option
@@ -60,6 +56,7 @@
                     </el-select>
                     <!-- 删除选中 -->
                     <el-button
+                        v-if="selectedRows.length > 0"
                         :disabled="selectedRows.length === 0"
                         class="inputBtn"
                         @click="batchDelete"
@@ -274,9 +271,9 @@ import { timeFormat, loadingText } from './utils/common'
 import { useI18n } from 'vue-i18n'
 import VConsole from 'vconsole'
 import { join } from '@tauri-apps/api/path'
-import { ElMessage } from 'element-plus'
 import { writeTextFile } from '@tauri-apps/plugin-fs'
 import i18n from '@/lang'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { load } from '@tauri-apps/plugin-store'
 
 // 转换loading
@@ -298,7 +295,7 @@ const btnDisabled = ref(false)
 const sourceData = ref<any[]>([
     {
         index: 1,
-        name: '第一个001.prt',
+        name: '第一个001aaaBBBB.prt',
         size: '100KB',
         update: '2021-01-01 12:00:00',
         state: 0,
@@ -306,7 +303,7 @@ const sourceData = ref<any[]>([
     },
     {
         index: 2,
-        name: '第二季002.stp',
+        name: '第二季002ddddAdd.stp',
         size: '100KB',
         update: '2021-01-01 12:00:00',
         state: 0,
@@ -314,7 +311,7 @@ const sourceData = ref<any[]>([
     },
     {
         index: 3,
-        name: '第三季003.x_t',
+        name: '第三季003jjjjjDDDD.x_t',
         size: '100KB',
         update: '2021-01-01 12:00:00',
         state: 0,
@@ -322,7 +319,7 @@ const sourceData = ref<any[]>([
     },
     {
         index: 4,
-        name: '第四季004.x_t',
+        name: '第四季004addd.x_t',
         size: '100KB',
         update: '2021-01-01 12:00:00',
         state: 0,
@@ -371,9 +368,20 @@ const batchUpdatePolicy = () => {
 // 批量删除选中
 const batchDelete = () => {
     console.log('批量删除选中', selectedRows.value)
-    tableData.value = tableData.value.filter(
-        (item) => !selectedRows.value.includes(item)
-    )
+    ElMessageBox.confirm('确定要删除选中文件吗？', 'Warning', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        center: true,
+        type: 'warning',
+    })
+        .then(() => {
+            tableData.value = tableData.value.filter(
+                (item) => !selectedRows.value.includes(item)
+            )
+        })
+        .catch(() => {
+            console.log('取消删除')
+        })
 }
 
 // stopTrans
@@ -390,7 +398,7 @@ const search = (value: string) => {
         tableData.value = sourceData.value
     } else {
         tableData.value = sourceData.value.filter((item) =>
-            item.name.includes(value)
+            item.name.toLowerCase().includes(value.toLowerCase())
         )
     }
 }
@@ -700,10 +708,6 @@ onMounted(async () => {
             gap: 0.625rem;
             flex: 1;
 
-            .inputBtn {
-                width: 10rem;
-            }
-
             .inputBox {
                 display: flex;
                 flex-direction: row;
@@ -726,7 +730,11 @@ onMounted(async () => {
                 display: flex;
                 flex-direction: row;
                 align-items: center;
-                justify-content: space-between;
+                justify-content: flex-start;
+
+                .searchInput {
+                    width: 20rem;
+                }
 
                 .searchBtn {
                     margin: 0 0.625rem;
@@ -739,7 +747,7 @@ onMounted(async () => {
                 }
 
                 .selectBox {
-                    width: 10rem;
+                    max-width: 6rem;
                     margin: 0 0.625rem;
                 }
             }
