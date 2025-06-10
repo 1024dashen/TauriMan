@@ -754,7 +754,7 @@ onMounted(async () => {
         }
 
         .headerRight {
-            width: 18.75rem;
+            width: 18rem;
             height: 100%;
             display: flex;
             flex-direction: row;
@@ -779,7 +779,7 @@ onMounted(async () => {
 
         .contentLeft {
             flex: 1;
-            width: 100%;
+            min-width: 20rem;
             overflow-y: hidden;
 
             .tableBox {
@@ -801,7 +801,7 @@ onMounted(async () => {
         }
 
         .contentRight {
-            width: 18.75rem;
+            width: 18rem;
             border: 0.0625rem solid rgb(223, 223, 223);
             border-radius: 0.625rem;
             // overflow-y: scroll;
