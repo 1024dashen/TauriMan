@@ -636,7 +636,6 @@ const disableRightClick = () => {
     }
 }
 
-
 // 获取环境变量
 const getEnvVar = async () => {
     console.log('getEnvVar------')
@@ -734,7 +733,7 @@ onMounted(async () => {
                 }
 
                 .toolTitle {
-                    width: 6rem;
+                    width: 90px;
                     font-size: 0.75rem;
                     color: #4f5154;
                 }
