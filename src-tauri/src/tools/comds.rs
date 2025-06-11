@@ -1,4 +1,5 @@
 use super::model::ServerState;
+use machine_uid;
 use std::env;
 use std::fs;
 use std::io;
@@ -6,8 +7,6 @@ use std::net::TcpListener;
 use std::path::PathBuf;
 use std::sync::{Arc, Mutex};
 use warp::Filter;
-use machine_uid;
-
 
 // load man.json
 pub fn load_man(base_dir: &str) -> Result<String, io::Error> {
