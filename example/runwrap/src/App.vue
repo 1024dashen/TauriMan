@@ -503,7 +503,6 @@ const writeLog = async (
 ) => {
     // 创建logs文件夹
     const logsDir = await join(exeDir.value, 'logs')
-
     const logPath = await join(logsDir, `${fileName}.txt`)
     await writeTextFile(logPath, log, { append })
 }
