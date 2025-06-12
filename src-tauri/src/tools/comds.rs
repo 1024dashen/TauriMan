@@ -1,5 +1,6 @@
 use super::model::FileInfo;
 use super::model::ServerState;
+use encoding_rs::{GBK, UTF_8};
 use machine_uid;
 use std::env;
 use std::fs;
@@ -36,22 +37,13 @@ pub fn get_env_var(name: String) -> Result<String, String> {
 #[tauri::command]
 pub async fn run_command(command: String) -> Result<String, String> {
     #[cfg(target_os = "windows")]
-    let output = {
-        // 先设置控制台编码为UTF-8
-        let _ = tokio::process::Command::new("powershell")
-            .arg("-Command")
-            .arg("chcp 65001 | Out-Null")
-            .creation_flags(0x08000000)
-            .status()
-            .await;
-        tokio::process::Command::new("powershell")
-            .arg("-Command")
-            .arg(&command)
-            .creation_flags(0x08000000)
-            .output()
-            .await
-            .map_err(|e| e.to_string())?
-    };
+    let output = tokio::process::Command::new("powershell")
+        .arg("-Command")
+        .arg(&command)
+        .creation_flags(0x08000000)
+        .output()
+        .await
+        .map_err(|e| e.to_string())?;
 
     #[cfg(not(target_os = "windows"))]
     let output = tokio::process::Command::new("sh")
@@ -60,10 +52,28 @@ pub async fn run_command(command: String) -> Result<String, String> {
         .output()
         .await
         .map_err(|e| e.to_string())?;
+
     if output.status.success() {
-        Ok(String::from_utf8_lossy(&output.stdout).to_string())
+        #[cfg(target_os = "windows")]
+        {
+            // 在Windows上尝试从GBK转换为UTF-8
+            let (decoded, _, _) = GBK.decode(&output.stdout);
+            Ok(decoded.into_owned())
+        }
+        #[cfg(not(target_os = "windows"))]
+        {
+            Ok(String::from_utf8_lossy(&output.stdout).to_string())
+        }
     } else {
-        Err(String::from_utf8_lossy(&output.stderr).to_string())
+        #[cfg(target_os = "windows")]
+        {
+            let (decoded, _, _) = GBK.decode(&output.stderr);
+            Err(decoded.into_owned())
+        }
+        #[cfg(not(target_os = "windows"))]
+        {
+            Err(String::from_utf8_lossy(&output.stderr).to_string())
+        }
     }
 }
 
