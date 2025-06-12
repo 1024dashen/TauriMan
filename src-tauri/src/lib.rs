@@ -21,6 +21,7 @@ pub fn run() {
             tools::comds::read_dir,
             tools::comds::run_command,
             tools::comds::get_env_var,
+            tools::comds::get_os_info,
         ])
         .setup(|app| {
             tauri::async_runtime::block_on(async move {

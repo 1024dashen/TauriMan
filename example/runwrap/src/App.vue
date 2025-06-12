@@ -651,6 +651,8 @@ const getEnvVar = async () => {
         name: 'UGII_LANG',
     })
     console.log('envVar---', envVar)
+    const osInfo = await invoke('get_os_info')
+    console.log('osInfo---', osInfo)
 }
 
 // run help

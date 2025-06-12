@@ -83,6 +83,17 @@ pub fn read_dir(path: String) -> Result<Vec<FileInfo>, String> {
 }
 
 #[tauri::command]
+pub fn get_os_info() -> String {
+    // 获取操作系统类型
+    let os = std::env::consts::OS;
+    println!("操作系统: {}", os); // 输出: "windows", "linux", "macos" 等
+    // 获取系统架构
+    let arch = std::env::consts::ARCH;
+    println!("系统架构: {}", arch); // 输出: "x86", "x86_64", "arm", "aarch64" 等
+    format!("{} {}", os, arch) 
+}
+
+#[tauri::command]
 pub fn open_folder(path: String) -> Result<(), String> {
     #[cfg(target_os = "macos")]
     let command = "open";
