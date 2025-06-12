@@ -278,7 +278,7 @@ import { load } from '@tauri-apps/plugin-store'
 import { existsSync } from 'fs'
 
 // 转换loading
-const transLoading = ref(true)
+const transLoading = ref(false)
 // 国际化
 const { t } = useI18n()
 // exe dir
@@ -328,14 +328,14 @@ const sourceData = ref<any[]>([
     },
 ])
 
-// 表格数据
+// 搜索后的表格数据
 const tableData = ref<any[]>(sourceData.value)
 
 // 日志
 const transLog = ref<any[]>([])
 
 // 加工策略
-const plan = ref(1)
+const plan = ref(0)
 const planOptions = ref<any[]>([
     {
         value: 0,
@@ -440,6 +440,7 @@ const readDir = async (dir: string) => {
             ...item,
             index: index++,
             state: 0,
+            policy: plan.value,
             update: timeFormat(item.modified),
         }))
         .filter(
@@ -519,6 +520,7 @@ const openLogFile = async (fileName: string) => {
 // 执行转换文件逻辑
 const transFile = async (file: any, isBundle: boolean = false) => {
     const fileName = file.name
+    const filePolicy = file.policy
     console.log('执行命令', fileName)
     if (!inputDir.value || !outputDir.value) {
         ElMessage.error('请先选择输入和输出文件夹')
@@ -540,7 +542,7 @@ const transFile = async (file: any, isBundle: boolean = false) => {
         )
         loadingText(`正在转换文件 ${fileName}...`)
         const result = await runCommand(
-            `-i "${inputFilePath}" -o ${outputDir.value}`,
+            `rockconvert -i "${inputFilePath}" -o "${outputDir.value}" s ${filePolicy}`,
             fileName
         )
         if (result) {
@@ -584,7 +586,8 @@ const runBundleCmd = async () => {
         return
     }
     transLoading.value = true
-    for (const item of tableData.value) {
+    // 转换选中的文件
+    for (const item of selectedRows.value) {
         await transFile(item, true)
     }
     transLoading.value = false
@@ -674,11 +677,6 @@ const initEnv = async () => {
         ElMessage.error('没有检测到 rockcamrun 程序，请检查安装')
         btnDisabled.value = true
     }
-    // 初始化输入输出目录
-    inputDir.value = ((await store.get('inputDir')) || { value: '' }).value
-    outputDir.value = ((await store.get('outputDir')) || { value: '' }).value
-    console.log('inputDir', inputDir.value, 'outputDir', outputDir.value)
-    inputDir.value && readDir(inputDir.value)
     // 初始化策略
     const policyStr = await runCommand('sysschemes')
     if (policyStr) {
@@ -692,6 +690,15 @@ const initEnv = async () => {
                     value: index,
                 })
             )
+            if (
+                policy.selection &&
+                policy.selection < planOptions.value.length
+            ) {
+                plan.value = policy.selection
+            } else {
+                // 默认选择第一个策略
+                plan.value = 0
+            }
             plan.value = policy.selection
         } catch (error) {
             console.error('获取策略失败', error)
@@ -703,6 +710,11 @@ const initEnv = async () => {
         ElMessage.error('没有检测到策略，请检查安装')
         btnDisabled.value = true
     }
+    // 初始化输入输出目录
+    inputDir.value = ((await store.get('inputDir')) || { value: '' }).value
+    outputDir.value = ((await store.get('outputDir')) || { value: '' }).value
+    console.log('inputDir', inputDir.value, 'outputDir', outputDir.value)
+    inputDir.value && readDir(inputDir.value)
 }
 
 onMounted(async () => {
