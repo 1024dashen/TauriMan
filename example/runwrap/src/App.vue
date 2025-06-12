@@ -480,8 +480,9 @@ const runCommand = async (command: string, fileName?: string) => {
         console.log('run_command------', result)
         fileName && (await writeLog(fileName, result))
         if (
-            result &&
-            (result.includes('copied') || result.includes('--help'))
+            (result &&
+                (result.includes('copied') || result.includes('--help'))) ||
+            result.includes('schemes')
         ) {
             return result
         } else {
