@@ -15,7 +15,7 @@
     },
     "locale": "zh-CN",
     "langs": {
-        "en": {
+        "english": {
             "label": "English",
             "inputDir": "Input Dir",
             "outputDir": "Output Dir",
@@ -40,7 +40,7 @@
             "action": "Action",
             "empty": "No data"
         },
-        "zh-CN": {
+        "simpl_chinese": {
             "label": "中文",
             "inputDir": "输入文件夹",
             "outputDir": "输出文件夹",

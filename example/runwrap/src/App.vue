@@ -335,7 +335,7 @@ const transLog = ref<any[]>([])
 
 // 加工策略
 const plan = ref(1)
-const planOptions = [
+const planOptions = ref<any[]>([
     {
         value: 0,
         label: '钢',
@@ -348,7 +348,7 @@ const planOptions = [
         value: 2,
         label: '铜',
     },
-]
+])
 
 // 批量选中操作
 const selectedRows = ref<any[]>([])
@@ -468,7 +468,7 @@ const openDir = (dir: string) => {
 }
 
 // 执行命令
-const runCommand = async (fileName: string, command: string) => {
+const runCommand = async (command: string, fileName?: string) => {
     try {
         // const rockcamrun = await join(currentDir, 'config', 'bin', 'fnm')
         const rockcamrun = await join(exeDir.value, 'rockcamrun')
@@ -477,18 +477,18 @@ const runCommand = async (fileName: string, command: string) => {
             command: `${rockcamrun} ${command}`,
         })
         console.log('run_command------', result)
-        await writeLog(fileName, result)
+        fileName && (await writeLog(fileName, result))
         if (
             result &&
             (result.includes('copied') || result.includes('--help'))
         ) {
-            return true
+            return result
         } else {
             return false
         }
     } catch (error) {
         console.error('执行命令失败', error)
-        await writeLog(fileName, JSON.stringify(error))
+        fileName && (await writeLog(fileName, JSON.stringify(error)))
         return false
     }
 }
@@ -536,8 +536,8 @@ const transFile = async (file: any, isBundle: boolean = false) => {
         )
         loadingText(`正在转换文件 ${fileName}...`)
         const result = await runCommand(
-            fileName,
-            `-i "${inputFilePath}" -o ${outputDir.value}`
+            `-i "${inputFilePath}" -o ${outputDir.value}`,
+            fileName
         )
         if (result) {
             // 记录成功信息
@@ -598,10 +598,11 @@ const initLang = async () => {
         const manStr: string = await invoke('get_man')
         const manJson = JSON.parse(manStr)
         console.log('manJson invoke---', manJson)
-        i18n.global.setLocaleMessage(
-            manJson.locale,
-            manJson.langs[manJson.locale]
-        )
+        const localLang: string = await invoke('get_env_var', {
+            name: 'UGII_LANG',
+        })
+        console.log('localLang---', localLang)
+        i18n.global.setLocaleMessage(localLang, manJson.langs[localLang])
         i18n.global.locale.value = manJson.locale
     } catch (error) {
         console.error('获取man失败', error)
@@ -661,7 +662,7 @@ const initEnv = async () => {
     // 获取exe文件夹
     exeDir.value = await invoke('get_exe_dir')
     // 检查是否存在rockcamrun
-    const check = await runCommand('programe-init', '--help')
+    const check = await runCommand('--help', 'programe-init')
     if (check) {
         console.log('执行帮助命令成功')
     } else {
@@ -674,12 +675,36 @@ const initEnv = async () => {
     outputDir.value = ((await store.get('outputDir')) || { value: '' }).value
     console.log('inputDir', inputDir.value, 'outputDir', outputDir.value)
     inputDir.value && readDir(inputDir.value)
+    // 初始化策略
+    const policyStr = await runCommand('sysschemes')
+    if (policyStr) {
+        console.log('获取策略成功')
+        try {
+            const policy = JSON.parse(policyStr)
+            console.log('policy---', policy)
+            planOptions.value = policy.schemes.map(
+                (item: any, index: number) => ({
+                    label: item,
+                    value: index,
+                })
+            )
+            plan.value = policy.selection
+        } catch (error) {
+            console.error('获取策略失败', error)
+            ElMessage.error('获取策略失败')
+            btnDisabled.value = true
+        }
+    } else {
+        console.error('获取策略失败')
+        ElMessage.error('没有检测到策略，请检查安装')
+        btnDisabled.value = true
+    }
 }
 
 onMounted(async () => {
     console.log('mounted------', inputDir.value, outputDir.value)
     await initLang()
-    // await initEnv()
+    await initEnv()
     await getEnvVar()
     // 禁用右键
     !import.meta.env.DEV && disableRightClick()
