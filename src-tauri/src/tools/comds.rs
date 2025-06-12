@@ -36,13 +36,23 @@ pub fn get_env_var(name: String) -> Result<String, String> {
 #[tauri::command]
 pub async fn run_command(command: String) -> Result<String, String> {
     #[cfg(target_os = "windows")]
-    let output = tokio::process::Command::new("powershell")
-        .arg("-Command")
-        .arg(&command)
-        .creation_flags(0x08000000)
-        .output()
-        .await
-        .map_err(|e| e.to_string())?;
+    let output = {
+        // 先设置控制台编码为UTF-8
+        let _ = tokio::process::Command::new("powershell")
+            .arg("-Command")
+            .arg("chcp 65001 | Out-Null")
+            .creation_flags(0x08000000)
+            .status()
+            .await;
+        tokio::process::Command::new("powershell")
+            .arg("-Command")
+            .arg(&command)
+            .creation_flags(0x08000000)
+            .output()
+            .await
+            .map_err(|e| e.to_string())?
+    };
+
     #[cfg(not(target_os = "windows"))]
     let output = tokio::process::Command::new("sh")
         .arg("-c")
