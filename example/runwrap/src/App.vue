@@ -609,7 +609,7 @@ const initLang = async () => {
         })
         console.log('localLang---', localLang)
         i18n.global.setLocaleMessage(localLang, manJson.langs[localLang])
-        i18n.global.locale.value = manJson.locale
+        i18n.global.locale.value = localLang
     } catch (error) {
         console.error('获取man失败', error)
     }
