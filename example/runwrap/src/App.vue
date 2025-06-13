@@ -35,7 +35,7 @@
                     <el-input
                         v-model="searchValue"
                         class="searchInput"
-                        placeholder="请输入搜索关键词"
+                        :placeholder="t('placeholder')"
                         @input="search"
                     />
                     <el-select
@@ -63,7 +63,7 @@
                         type="danger"
                         plain
                     >
-                        删除选中
+                        {{ t('deleteSelected') }}
                     </el-button>
                 </div>
             </div>
@@ -114,7 +114,7 @@
                     />
                     <el-table-column
                         prop="action"
-                        label="加工策略"
+                        :label="t('policy')"
                         width="80"
                         align="center"
                     >
@@ -249,7 +249,9 @@
                     </svg>
                 </div>
             </div>
-            <div class="loadingText">正在转换文件...</div>
+            <div class="loadingText">
+                {{ t('transFileing') }} {{ currentFile }}...
+            </div>
             <el-button
                 class="stopBtn"
                 :disabled="bundleState"
@@ -258,7 +260,7 @@
                 type="danger"
                 plain
             >
-                停止执行
+                {{ t('stopTrans') }}
             </el-button>
         </div>
     </el-dialog>
@@ -268,7 +270,7 @@
 import { onMounted, ref } from 'vue'
 import { open } from '@tauri-apps/plugin-dialog'
 import { invoke } from '@tauri-apps/api/core'
-import { timeFormat, loadingText } from './utils/common'
+import { timeFormat } from './utils/common'
 import { useI18n } from 'vue-i18n'
 import VConsole from 'vconsole'
 import { join } from '@tauri-apps/api/path'
@@ -522,6 +524,7 @@ const openLogFile = async (fileName: string) => {
 }
 
 // 执行转换文件逻辑
+const currentFile = ref<any>('')
 const transFile = async (file: any, isBundle: boolean = false) => {
     const fileName = file.name
     const filePolicy = file.policy
@@ -544,7 +547,7 @@ const transFile = async (file: any, isBundle: boolean = false) => {
             'outputDir',
             outputDir.value
         )
-        loadingText(`正在转换文件 ${fileName}...`)
+        currentFile.value = fileName
         const result = await runCommand(
             `rockconvert -i "${inputFilePath}" -o "${outputDir.value}" -s ${filePolicy}`,
             fileName

@@ -38,7 +38,16 @@
             "delete": "Delete",
             "record": "Record",
             "action": "Action",
-            "empty": "No data"
+            "empty": "No data",
+            "search": "search",
+            "placeholder": "Please enter the search keyword",
+            "select": "Please select",
+            "batchUpdate": "Batch Update",
+            "currentFile": "Current File",
+            "deleteSelected": "Delete Selected",
+            "policy": "Policy",
+            "transFileing": "Trans Fileing",
+            "stopTrans": "Stop Trans"
         },
         "simpl_chinese": {
             "label": "中文",
@@ -63,7 +72,16 @@
             "delete": "删除",
             "record": "记录",
             "action": "执行",
-            "empty": "暂无数据"
+            "empty": "暂无数据",
+            "search": "搜索",
+            "placeholder": "请输入搜索关键词",
+            "select": "请选择",
+            "batchUpdate": "批量更新",
+            "currentFile": "当前文件",
+            "deleteSelected": "删除选中",
+            "policy": "加工策略",
+            "transFileing": "正在转换文件",
+            "stopTrans": "停止执行"
         }
     }
 }
