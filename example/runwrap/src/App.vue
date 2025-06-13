@@ -272,7 +272,7 @@ import { timeFormat, loadingText } from './utils/common'
 import { useI18n } from 'vue-i18n'
 import VConsole from 'vconsole'
 import { join } from '@tauri-apps/api/path'
-import { writeTextFile } from '@tauri-apps/plugin-fs'
+import { exists, mkdir, writeTextFile } from '@tauri-apps/plugin-fs'
 import i18n from '@/lang'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { load } from '@tauri-apps/plugin-store'
@@ -504,6 +504,10 @@ const writeLog = async (
 ) => {
     // 创建logs文件夹
     const logsDir = await join(exeDir.value, 'logs')
+    const exist = await exists(logsDir)
+    if (!exist) {
+        await mkdir(logsDir)
+    }
     const logPath = await join(logsDir, `${fileName}.txt`)
     await writeTextFile(logPath, log, { append })
 }
