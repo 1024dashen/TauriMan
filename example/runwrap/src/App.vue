@@ -388,7 +388,7 @@ const batchDelete = () => {
 // stopTrans
 const stopTrans = () => {
     console.log('停止转换')
-    bundleState = true
+    bundleState.value = true
 }
 
 // 模糊搜索过滤表格数据
@@ -583,7 +583,7 @@ const transFile = async (file: any, isBundle: boolean = false) => {
 }
 
 // 批量执行是否要停止
-let bundleState = false
+let bundleState = ref(false)
 // 批量执行命令
 const runBundleCmd = async () => {
     console.log('批量执行命令')
@@ -594,7 +594,7 @@ const runBundleCmd = async () => {
     transLoading.value = true
     // 转换选中的文件
     for (const item of selectedRows.value) {
-        if (bundleState) {
+        if (bundleState.value) {
             transLoading.value = false
             return
         } else {
