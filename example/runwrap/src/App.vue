@@ -252,6 +252,7 @@
             <div class="loadingText">正在转换文件...</div>
             <el-button
                 class="stopBtn"
+                :disabled="bundleState"
                 @click="stopTrans"
                 size="default"
                 type="danger"
@@ -271,11 +272,10 @@ import { timeFormat, loadingText } from './utils/common'
 import { useI18n } from 'vue-i18n'
 import VConsole from 'vconsole'
 import { join } from '@tauri-apps/api/path'
-import { mkdir, writeTextFile } from '@tauri-apps/plugin-fs'
+import { writeTextFile } from '@tauri-apps/plugin-fs'
 import i18n from '@/lang'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { load } from '@tauri-apps/plugin-store'
-import { existsSync } from 'fs'
 
 // 转换loading
 const transLoading = ref(false)
@@ -388,7 +388,7 @@ const batchDelete = () => {
 // stopTrans
 const stopTrans = () => {
     console.log('停止转换')
-    transLoading.value = false
+    bundleState = true
 }
 
 // 模糊搜索过滤表格数据
@@ -578,6 +578,8 @@ const transFile = async (file: any, isBundle: boolean = false) => {
     }
 }
 
+// 批量执行是否要停止
+let bundleState = false
 // 批量执行命令
 const runBundleCmd = async () => {
     console.log('批量执行命令')
@@ -588,7 +590,12 @@ const runBundleCmd = async () => {
     transLoading.value = true
     // 转换选中的文件
     for (const item of selectedRows.value) {
-        await transFile(item, true)
+        if (bundleState) {
+            transLoading.value = false
+            return
+        } else {
+            await transFile(item, true)
+        }
     }
     transLoading.value = false
     ElMessage.success('批量转换完成')
