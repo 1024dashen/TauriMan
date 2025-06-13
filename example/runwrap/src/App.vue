@@ -542,7 +542,7 @@ const transFile = async (file: any, isBundle: boolean = false) => {
         )
         loadingText(`正在转换文件 ${fileName}...`)
         const result = await runCommand(
-            `rockconvert -i "${inputFilePath}" -o "${outputDir.value}" s ${filePolicy}`,
+            `rockconvert -i "${inputFilePath}" -o "${outputDir.value}" -s ${filePolicy}`,
             fileName
         )
         if (result) {
