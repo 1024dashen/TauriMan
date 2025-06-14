@@ -586,7 +586,7 @@ const transFile = async (file: any, isBundle: boolean = false) => {
 }
 
 // 批量执行是否要停止
-let bundleState = ref(false)
+const bundleState = ref(false)
 // 批量执行命令
 const runBundleCmd = async () => {
     console.log('批量执行命令')
@@ -598,6 +598,8 @@ const runBundleCmd = async () => {
     // 转换选中的文件
     for (const item of selectedRows.value) {
         if (bundleState.value) {
+            console.log('批量执行命令停止')
+            bundleState.value = false
             transLoading.value = false
             return
         } else {
@@ -619,9 +621,10 @@ const initLang = async () => {
         const manStr: string = await invoke('get_man')
         const manJson = JSON.parse(manStr)
         console.log('manJson invoke---', manJson)
-        const localLang: string = await invoke('get_env_var', {
+        const UGII_LANG: string = await invoke('get_env_var', {
             name: 'UGII_LANG',
         })
+        const localLang = UGII_LANG || 'english'
         console.log('localLang---', localLang)
         i18n.global.setLocaleMessage(localLang, manJson.langs[localLang])
         i18n.global.locale.value = localLang
