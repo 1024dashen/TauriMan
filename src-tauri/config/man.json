@@ -47,7 +47,11 @@
             "deleteSelected": "Delete Selected",
             "policy": "Policy",
             "transFileing": "Trans Fileing",
-            "stopTrans": "Stop Trans"
+            "stopTrans": "Stop Trans",
+            "sureDeleteFiles": "are you sure?",
+            "confirm": "confirm",
+            "cancel": "cancel",
+            "warning": "warning"
         },
         "simpl_chinese": {
             "label": "中文",
@@ -81,7 +85,11 @@
             "deleteSelected": "删除选中",
             "policy": "加工策略",
             "transFileing": "正在转换文件",
-            "stopTrans": "停止执行"
+            "stopTrans": "停止执行",
+            "sureDeleteFiles": "确定要删除选中文件吗？",
+            "confirm": "确定",
+            "cancel": "取消",
+            "warning": "警告"
         }
     }
 }

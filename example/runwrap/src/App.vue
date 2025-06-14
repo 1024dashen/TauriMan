@@ -371,9 +371,9 @@ const batchUpdatePolicy = () => {
 // 批量删除选中
 const batchDelete = () => {
     console.log('批量删除选中', selectedRows.value)
-    ElMessageBox.confirm('确定要删除选中文件吗？', 'Warning', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
+    ElMessageBox.confirm(t('sureDeleteFiles'), t('warning'), {
+        confirmButtonText: t('confirm'),
+        cancelButtonText: t('cancel'),
         center: true,
         type: 'warning',
     })
