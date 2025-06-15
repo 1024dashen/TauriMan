@@ -11,6 +11,11 @@ use std::sync::{Arc, Mutex};
 use std::time::UNIX_EPOCH;
 use warp::Filter;
 
+#[tauri::command]
+pub fn greet(name: &str) -> String {
+    format!("Hello, {}! You've been greeted from TauriMan!", name)
+}
+
 // load man.json
 pub fn load_man(base_dir: &str) -> Result<String, io::Error> {
     let mut man_path = PathBuf::from(base_dir);

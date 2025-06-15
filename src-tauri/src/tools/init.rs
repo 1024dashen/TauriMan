@@ -30,7 +30,7 @@ pub async fn resolve_setup(app: &mut App) -> Result<(), Error> {
     let window_json = r#"
         {
             "title": "rockcamrunwrap",
-            "url": "http://localhost:5173/"
+            "url": "index.html"
         }
     "#;
     let mut config: WindowConfig = serde_json::from_str(window_json).unwrap();

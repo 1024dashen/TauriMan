@@ -13,6 +13,7 @@ pub fn run() {
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_dialog::init())
         .invoke_handler(tauri::generate_handler![
+            tools::comds::greet,
             tools::comds::get_exe_dir,
             tools::comds::get_man,
             tools::comds::get_machine_uid,
