@@ -68,23 +68,6 @@
         "fs:allow-appdata-write",
         "fs:allow-appdata-write-recursive",
         {
-            "identifier": "opener:allow-open-path",
-            "allow": [
-                {
-                    "path": "/path/to/file"
-                },
-                {
-                    "path": "$APPDATA/file"
-                },
-                {
-                    "url": "https://tauri.app"
-                },
-                {
-                    "url": "custom:*"
-                }
-            ]
-        },
-        {
             "identifier": "fs:scope",
             "allow": [
                 "**",

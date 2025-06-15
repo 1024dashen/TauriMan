@@ -29,7 +29,7 @@ pub async fn resolve_setup(app: &mut App) -> Result<(), Error> {
 
     let window_json = r#"
         {
-            "title": "TauriMan",
+            "title": "rockcamrunwrap",
             "url": "http://localhost:5173/"
         }
     "#;

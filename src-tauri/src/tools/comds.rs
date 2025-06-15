@@ -1,4 +1,6 @@
+use super::model::FileInfo;
 use super::model::ServerState;
+use encoding_rs::{GBK, UTF_8};
 use machine_uid;
 use std::env;
 use std::fs;
@@ -6,6 +8,7 @@ use std::io;
 use std::net::TcpListener;
 use std::path::PathBuf;
 use std::sync::{Arc, Mutex};
+use std::time::UNIX_EPOCH;
 use warp::Filter;
 
 // load man.json
@@ -24,6 +27,103 @@ pub fn load_man(base_dir: &str) -> Result<String, io::Error> {
             Err(e)
         }
     }
+}
+
+#[tauri::command]
+pub fn get_env_var(name: String) -> Result<String, String> {
+    std::env::var(name).map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+pub async fn run_command(command: String) -> Result<String, String> {
+    #[cfg(target_os = "windows")]
+    let output = tokio::process::Command::new("powershell")
+        .arg("-Command")
+        .arg(&command)
+        .creation_flags(0x08000000)
+        .output()
+        .await
+        .map_err(|e| e.to_string())?;
+
+    #[cfg(not(target_os = "windows"))]
+    let output = tokio::process::Command::new("sh")
+        .arg("-c")
+        .arg(&command)
+        .output()
+        .await
+        .map_err(|e| e.to_string())?;
+
+    if output.status.success() {
+        #[cfg(target_os = "windows")]
+        {
+            // 在Windows上尝试从GBK转换为UTF-8
+            let (decoded, _, _) = GBK.decode(&output.stdout);
+            Ok(decoded.into_owned())
+        }
+        #[cfg(not(target_os = "windows"))]
+        {
+            Ok(String::from_utf8_lossy(&output.stdout).to_string())
+        }
+    } else {
+        #[cfg(target_os = "windows")]
+        {
+            let (decoded, _, _) = GBK.decode(&output.stderr);
+            Err(decoded.into_owned())
+        }
+        #[cfg(not(target_os = "windows"))]
+        {
+            Err(String::from_utf8_lossy(&output.stderr).to_string())
+        }
+    }
+}
+
+#[tauri::command]
+pub fn read_dir(path: String) -> Result<Vec<FileInfo>, String> {
+    let entries = fs::read_dir(path).map_err(|e| e.to_string())?;
+    let mut files = Vec::new();
+    for entry in entries {
+        let entry = entry.map_err(|e| e.to_string())?;
+        let metadata = entry.metadata().map_err(|e| e.to_string())?;
+
+        let modified = metadata
+            .modified()
+            .map_err(|e| e.to_string())?
+            .duration_since(UNIX_EPOCH)
+            .map_err(|e| e.to_string())?
+            .as_secs();
+
+        files.push(FileInfo {
+            name: entry.file_name().to_string_lossy().into_owned(),
+            size: metadata.len(),
+            modified,
+            is_dir: metadata.is_dir(),
+        });
+    }
+    Ok(files)
+}
+
+#[tauri::command]
+pub fn get_os_info() -> String {
+    // "windows", "linux", "macos"
+    let os = std::env::consts::OS;
+    // "x86", "x86_64", "arm", "aarch64"
+    let arch = std::env::consts::ARCH;
+    format!("{} {}", os, arch)
+}
+
+#[tauri::command]
+pub fn open_folder(path: String) -> Result<(), String> {
+    #[cfg(target_os = "macos")]
+    let command = "open";
+    #[cfg(target_os = "windows")]
+    let command = "explorer";
+    #[cfg(target_os = "linux")]
+    let command = "xdg-open";
+    std::process::Command::new(command)
+        .arg(&path)
+        .spawn()
+        .map_err(|e| e.to_string())?;
+    Ok(())
 }
 
 #[tauri::command]

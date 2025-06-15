@@ -1,7 +1,3 @@
-# Publish Note
+# 发布说明
 
-windows
-
-mac
-
-linux
+tauriman

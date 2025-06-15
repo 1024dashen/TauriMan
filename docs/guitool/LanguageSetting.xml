@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<LanguageSetting>
+	<Language name="zh-CN">
+		<Input>输入文件夹</Input>
+		<Output>输出文件夹</Output>
+		<BatchGo>批量执行</BatchGo>
+		<Files>文件列表</Files>
+		<Logs>执行日志</Logs>
+		
+		<FileName>文件名称</FileName>
+		<FileSize>文件大小(kb)</FileSize>
+		<UpdateTime>最新修改时间</UpdateTime>
+		<Run>执行</Run>
+		<State>状态</State>
+		<Record>记录</Record>
+		<Delete>删除</Delete>
+
+		<Waiting>等待</Waiting>
+		<Running>进行中</Running>
+		<Finish>完成</Finish>
+		<Error>错误</Error>
+
+
+		<ChuLiZhong>处理中</ChuLiZhong>
+		<ChuLiWanCheng>处理完成</ChuLiWanCheng>
+		<WeiZhaoD>未找到</WeiZhaoD>
+		<BuNengWeiKong>输入或输出文件夹不可为空</BuNengWeiKong>
+		<TiShi>提示</TiShi>
+		<WuJiLuZhiXing>无执行记录！\r\n是否执行转化？</WuJiLuZhiXing>
+		<GongJuBCZ>转化工具不存在，请确认后再试</GongJuBCZ>
+		<GongJuBZY>工具被占用</GongJuBZY>
+		<ChuLiShiBai>处理失败</ChuLiShiBai>
+		<ZhengZaiChongShi>正在重试</ZhengZaiChongShi>
+		<ChuLiChengGong>处理成功</ChuLiChengGong>
+
+
+		<Title>rockcamrunwrap</Title>
+
+
+	</Language>
+	<Language name="en">
+		<Input>Input Folder</Input>
+		<Output>Output Folder</Output>
+		<BatchGo>Batch Execution</BatchGo>
+		<Files>File List</Files>
+		<Logs>Logs</Logs>
+
+		<FileName>FileName</FileName>
+		<FileSize>FileSize(kb)</FileSize>
+		<UpdateTime>LastUpdateTime</UpdateTime>
+		<Run>Run</Run>
+		<State>State</State>
+		<Record>Record</Record>
+		<Delete>Delete</Delete>
+
+		<Waiting>Waiting</Waiting>
+		<Running>Running</Running>
+		<Finish>Finish</Finish>
+		<Error>Error</Error>
+
+
+		<ChuLiZhong>Processing</ChuLiZhong>
+		<ChuLiWanCheng>Processing Completed</ChuLiWanCheng>
+		<WeiZhaoD>Not Found</WeiZhaoD>
+		<BuNengWeiKong>Input or Output folder cannot be empty</BuNengWeiKong>
+		<TiShi>Reminder</TiShi>
+		<WuJiLuZhiXing>No execution records!\r\nDo you want to perform the conversion?</WuJiLuZhiXing>
+		<GongJuBCZ>Conversion tool does not exist, please confirm and try again</GongJuBCZ>
+		<GongJuBZY>Tool is in use</GongJuBZY>
+		<ChuLiShiBai>Processing Failed</ChuLiShiBai>
+		<ZhengZaiChongShi>Retrying</ZhengZaiChongShi>
+		<ChuLiChengGong>Processing Successful</ChuLiChengGong>
+
+		<Title>rockcamrunwrap</Title>
+	</Language>
+</LanguageSetting>
