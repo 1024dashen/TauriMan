@@ -36,10 +36,6 @@
         "core:window:allow-close",
         "core:window:allow-internal-toggle-maximize",
         "store:default",
-        "shell:allow-kill",
-        "shell:allow-open",
-        "shell:allow-spawn",
-        "shell:allow-stdin-write",
         "dialog:allow-ask",
         "dialog:allow-confirm",
         "dialog:allow-message",
@@ -71,21 +67,6 @@
         "fs:allow-appconfig-write-recursive",
         "fs:allow-appdata-write",
         "fs:allow-appdata-write-recursive",
-        "autostart:allow-enable",
-        "autostart:allow-disable",
-        "autostart:allow-is-enabled",
-        "cli:default",
-        "clipboard-manager:allow-clear",
-        "clipboard-manager:allow-read-text",
-        "clipboard-manager:allow-write-text",
-        "clipboard-manager:allow-read-image",
-        "clipboard-manager:allow-write-image",
-        "clipboard-manager:allow-write-html",
-        "notification:default",
-        "os:default",
-        "process:default",
-        "sql:default",
-        "sql:allow-execute",
         {
             "identifier": "opener:allow-open-path",
             "allow": [
@@ -100,16 +81,6 @@
                 },
                 {
                     "url": "custom:*"
-                }
-            ]
-        },
-        {
-            "identifier": "shell:allow-execute",
-            "allow": [
-                {
-                    "name": "bin/fnm",
-                    "sidecar": true,
-                    "args": ["--version"]
                 }
             ]
         },
