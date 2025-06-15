@@ -8,7 +8,7 @@
         "tauri dev": "tauri dev",
         "tauri build": "tauri build",
         "tauri debug": "tauri build --debug",
-        "icon": "tauri icon"
+        "icon": "tauri icon && node scripts/creatIcon.cjs"
     },
     "devDependencies": {
         "@tauri-apps/cli": "^2",
