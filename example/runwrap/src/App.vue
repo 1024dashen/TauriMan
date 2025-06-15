@@ -296,38 +296,38 @@ const btnDisabled = ref(false)
 
 // 原始表格数据
 const sourceData = ref<any[]>([
-    {
-        index: 1,
-        name: '第一个001aaaBBBB.prt',
-        size: '100KB',
-        update: '2021-01-01 12:00:00',
-        state: 0,
-        policy: 0,
-    },
-    {
-        index: 2,
-        name: '第二季002ddddAdd.stp',
-        size: '100KB',
-        update: '2021-01-01 12:00:00',
-        state: 0,
-        policy: 0,
-    },
-    {
-        index: 3,
-        name: '第三季003jjjjjDDDD.x_t',
-        size: '100KB',
-        update: '2021-01-01 12:00:00',
-        state: 0,
-        policy: 0,
-    },
-    {
-        index: 4,
-        name: '第四季004addd.x_t',
-        size: '100KB',
-        update: '2021-01-01 12:00:00',
-        state: 0,
-        policy: 0,
-    },
+    // {
+    //     index: 1,
+    //     name: '第一个001aaaBBBB.prt',
+    //     size: '100KB',
+    //     update: '2021-01-01 12:00:00',
+    //     state: 0,
+    //     policy: 0,
+    // },
+    // {
+    //     index: 2,
+    //     name: '第二季002ddddAdd.stp',
+    //     size: '100KB',
+    //     update: '2021-01-01 12:00:00',
+    //     state: 0,
+    //     policy: 0,
+    // },
+    // {
+    //     index: 3,
+    //     name: '第三季003jjjjjDDDD.x_t',
+    //     size: '100KB',
+    //     update: '2021-01-01 12:00:00',
+    //     state: 0,
+    //     policy: 0,
+    // },
+    // {
+    //     index: 4,
+    //     name: '第四季004addd.x_t',
+    //     size: '100KB',
+    //     update: '2021-01-01 12:00:00',
+    //     state: 0,
+    //     policy: 0,
+    // },
 ])
 
 // 搜索后的表格数据
@@ -339,18 +339,18 @@ const transLog = ref<any[]>([])
 // 加工策略
 const plan = ref(0)
 const planOptions = ref<any[]>([
-    {
-        value: 0,
-        label: '钢',
-    },
-    {
-        value: 1,
-        label: '铝',
-    },
-    {
-        value: 2,
-        label: '铜',
-    },
+    // {
+    //     value: 0,
+    //     label: '钢',
+    // },
+    // {
+    //     value: 1,
+    //     label: '铝',
+    // },
+    // {
+    //     value: 2,
+    //     label: '铜',
+    // },
 ])
 
 // 批量选中操作
