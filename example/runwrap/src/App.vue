@@ -695,7 +695,7 @@ const initEnv = async () => {
         btnDisabled.value = true
     }
     // 初始化策略
-    const policyStr = await runCommand('sysschemes')
+    const policyStr = await runCommand('sysschemes', "sysschemes")
     if (policyStr) {
         console.log('获取策略成功')
         try {
@@ -740,7 +740,7 @@ onMounted(async () => {
     await initEnv()
     await getEnvVar()
     // 禁用右键
-    !import.meta.env.DEV && disableRightClick()
+    // !import.meta.env.DEV && disableRightClick()
 })
 </script>
 
