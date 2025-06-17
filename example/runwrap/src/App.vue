@@ -40,12 +40,12 @@
                     />
                     <!-- 文件类型 -->
                     <el-select
-                        v-if="selectedRows.length > 0"
                         v-model="fileType"
                         placeholder=""
-                        :disabled="selectedRows.length === 0"
+                        multiple
+                        collapse-tags
                         size="small"
-                        class="selectBox"
+                        class="fileType"
                         @change="fileTypeFilter"
                     >
                         <el-option
@@ -355,7 +355,7 @@ const tableData = ref<any[]>(sourceData.value)
 const transLog = ref<any[]>([])
 
 // 文件筛选
-const fileType = ref(0)
+const fileType = ref([])
 const fileOptions = ref<any[]>([
     {
         value: 'prt',
@@ -448,9 +448,16 @@ const search = (value: string) => {
 // 文件类型筛选
 const fileTypeFilter = (value: string) => {
     console.log('文件类型筛选', value)
-    tableData.value = tableData.value.filter((item) =>
-        item.name.endsWith(value)
-    )
+    const filterRes = tableData.value.filter((item) => {
+        fileType.value.length > 0
+            ? fileType.value.some((type) => item.name.endsWith(`.${type}`))
+            : true
+    })
+    if (value.length > 0) {
+        tableData.value = filterRes
+    } else {
+        tableData.value = sourceData.value
+    }
 }
 
 // 选择文件夹
@@ -496,6 +503,7 @@ const readDir = async (dir: string) => {
             (item: any) =>
                 item.name.endsWith('.prt') ||
                 item.name.endsWith('.stp') ||
+                item.name.endsWith('.step') ||
                 item.name.endsWith('.x_t')
         )
     // 表格数据
@@ -856,6 +864,11 @@ onMounted(async () => {
                 .selectBox {
                     max-width: 6rem;
                     margin: 0 0.625rem;
+                }
+
+                .fileType {
+                    width: 8rem;
+                    margin-left: 0.625rem;
                 }
             }
         }
