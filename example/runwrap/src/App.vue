@@ -46,7 +46,7 @@
                         collapse-tags
                         size="small"
                         class="fileType"
-                        @change="fileTypeFilter"
+                        @change="search"
                     >
                         <el-option
                             v-for="item in fileOptions"
@@ -355,7 +355,7 @@ const tableData = ref<any[]>(sourceData.value)
 const transLog = ref<any[]>([])
 
 // 文件筛选
-const fileType = ref([])
+const fileType: any = ref([])
 const fileOptions = ref<any[]>([
     {
         value: 'prt',
@@ -434,30 +434,29 @@ const stopTrans = () => {
 
 // 模糊搜索过滤表格数据
 const searchValue = ref('')
-const search = (value: string) => {
-    console.log('模糊搜索', value)
-    if (value === '') {
-        tableData.value = sourceData.value
-    } else {
-        tableData.value = sourceData.value.filter((item) =>
-            item.name.toLowerCase().includes(value.toLowerCase())
-        )
-    }
-}
-
-// 文件类型筛选
-const fileTypeFilter = (value: string) => {
-    console.log('文件类型筛选', value)
-    const filterRes = tableData.value.filter((item) => {
-        fileType.value.length > 0
-            ? fileType.value.some((type) => item.name.endsWith(`.${type}`))
-            : true
+const search = () => {
+    console.log('模糊搜索', searchValue.value)
+    // 关键词筛选
+    const keywordFilter = sourceData.value.filter((item) => {
+        if (searchValue.value === '') {
+            return true
+        } else {
+            return item.name
+                .toLowerCase()
+                .includes(searchValue.value.toLowerCase())
+        }
     })
-    if (value.length > 0) {
-        tableData.value = filterRes
-    } else {
-        tableData.value = sourceData.value
-    }
+    // 文件类型筛选
+    const fileTypeFilter = keywordFilter.filter((item) => {
+        if (fileType.value.length === 0) {
+            return true
+        } else {
+            return fileType.value.includes(item.name.split('.').pop())
+        }
+    })
+    // 合并筛选
+    console.log('合并筛选', fileTypeFilter)
+    tableData.value = fileTypeFilter
 }
 
 // 选择文件夹
