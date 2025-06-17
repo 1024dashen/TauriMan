@@ -9,9 +9,7 @@ pub async fn resolve_setup(app: &mut App) -> Result<(), Error> {
     // get startup dir
     let startup_dir = get_exe_dir();
     println!("startup_dir: {}", startup_dir);
-
     let app_handle = app.handle();
-
     let window_json = r#"
         {
             "title": "rockcamrunwrap",
@@ -19,7 +17,6 @@ pub async fn resolve_setup(app: &mut App) -> Result<(), Error> {
         }
     "#;
     let mut config: WindowConfig = serde_json::from_str(window_json).unwrap();
-
     let man = load_man(&startup_dir);
     let man_content = man.unwrap();
     if man_content.len() > 0 {
