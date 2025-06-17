@@ -446,6 +446,7 @@ const search = () => {
                 .includes(searchValue.value.toLowerCase())
         }
     })
+    console.log('关键词筛选', keywordFilter)
     // 文件类型筛选
     const fileTypeFilter = keywordFilter.filter((item) => {
         if (fileType.value.length === 0) {
