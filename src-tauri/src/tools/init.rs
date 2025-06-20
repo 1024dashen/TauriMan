@@ -1,7 +1,7 @@
 use super::model::Man;
 use crate::tools::comds::{get_exe_dir, get_www_dir, load_man};
 use serde_json::{json, Error};
-use tauri::{utils::config::WindowConfig, App, AppHandle, Manager, Url, WebviewUrl, WindowEvent};
+use tauri::{utils::config::WindowConfig, App, Url, WebviewUrl, WindowEvent};
 use tauri_plugin_store::StoreExt;
 
 // handle something when start app
