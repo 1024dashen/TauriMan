@@ -1,32 +1,15 @@
 use super::model::Man;
 use crate::tools::comds::{get_exe_dir, get_www_dir, load_man};
 use serde_json::{json, Error};
-use tauri::{utils::config::WindowConfig, App, AppHandle, Manager, Url, WebviewUrl, WindowEvent};
+use tauri::{utils::config::WindowConfig, App, Url, WebviewUrl, WindowEvent};
 use tauri_plugin_store::StoreExt;
-
-pub fn show_window(app: &AppHandle) {
-    let main = app.get_webview_window("main");
-    if let Some(main) = main {
-        main.unminimize().expect("Sorry, can't unminimize window");
-        main.set_focus().expect("Sorry, can't focus window");
-    } else {
-        app.webview_windows()
-            .values()
-            .next()
-            .expect("Sorry, no window found")
-            .set_focus()
-            .expect("Can't Bring Window to Focus");
-    }
-}
 
 // handle something when start app
 pub async fn resolve_setup(app: &mut App) -> Result<(), Error> {
     // get startup dir
     let startup_dir = get_exe_dir();
     println!("startup_dir: {}", startup_dir);
-
     let app_handle = app.handle();
-
     let window_json = r#"
         {
             "title": "rockcamrunwrap",
@@ -34,7 +17,6 @@ pub async fn resolve_setup(app: &mut App) -> Result<(), Error> {
         }
     "#;
     let mut config: WindowConfig = serde_json::from_str(window_json).unwrap();
-
     let man = load_man(&startup_dir);
     let man_content = man.unwrap();
     if man_content.len() > 0 {
