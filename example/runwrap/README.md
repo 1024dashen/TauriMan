@@ -1,5 +1,19 @@
-# Vue 3 + TypeScript + Vite
+# 项目介绍
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+项目基于Vue3 + Vite + Vue-Router + Element-Plus + Vue-i18n 封装的一个运行环境，用于运行 Vue 项目
 
-Learn more about the recommended Project Setup and IDE Support in the [Vue Docs TypeScript Guide](https://vuejs.org/guide/typescript/overview.html#project-setup).
+# 环境安装
+
+```shell
+pnpm install
+```
+
+# 运行环境
+
+项目开发和调试都需要在rockcamrunwrap.exe运行环境中运行，编译命令：
+
+```shell
+pnpm build
+```
+
+编译后将dist文件夹里面的内容复制到config > www文件夹中，然后启动rockcamrunwrap.exe即可看到效果

@@ -724,17 +724,6 @@ const disableRightClick = () => {
     }
 }
 
-// 获取环境变量
-const getEnvVar = async () => {
-    console.log('getEnvVar------')
-    const envVar = await invoke('get_env_var', {
-        name: 'UGII_LANG',
-    })
-    console.log('envVar---', envVar)
-    const osInfo = await invoke('get_os_info')
-    console.log('osInfo---', osInfo)
-}
-
 // run help
 const initEnv = async () => {
     store = await load('store.json', { autoSave: true })
@@ -791,9 +780,10 @@ const initEnv = async () => {
 
 onMounted(async () => {
     console.log('mounted------', inputDir.value, outputDir.value)
+    // 加载本地环境并初始化多语言
     await initLang()
+    // 检查rockcamrun程序并初始化
     await initEnv()
-    await getEnvVar()
     // 禁用右键
     !import.meta.env.DEV && disableRightClick()
 })
