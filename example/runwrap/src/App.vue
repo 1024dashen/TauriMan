@@ -38,6 +38,24 @@
                         :placeholder="t('placeholder')"
                         @input="search"
                     />
+                    <!-- 文件类型 -->
+                    <el-select
+                        v-if="selectedRows.length > 0"
+                        v-model="fileType"
+                        placeholder=""
+                        :disabled="selectedRows.length === 0"
+                        size="small"
+                        class="selectBox"
+                        @change="fileTypeFilter"
+                    >
+                        <el-option
+                            v-for="item in fileOptions"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                        />
+                    </el-select>
+                    <!-- 加工策略 -->
                     <el-select
                         v-if="selectedRows.length > 0"
                         v-model="plan"
@@ -336,6 +354,27 @@ const tableData = ref<any[]>(sourceData.value)
 // 日志
 const transLog = ref<any[]>([])
 
+// 文件筛选
+const fileType = ref(0)
+const fileOptions = ref<any[]>([
+    {
+        value: 'prt',
+        label: 'prt',
+    },
+    {
+        value: 'x_t',
+        label: 'x_t',
+    },
+    {
+        value: 'stp',
+        label: 'stp',
+    },
+    {
+        value: 'step',
+        label: 'step',
+    },
+])
+
 // 加工策略
 const plan = ref(0)
 const planOptions = ref<any[]>([
@@ -404,6 +443,14 @@ const search = (value: string) => {
             item.name.toLowerCase().includes(value.toLowerCase())
         )
     }
+}
+
+// 文件类型筛选
+const fileTypeFilter = (value: string) => {
+    console.log('文件类型筛选', value)
+    tableData.value = tableData.value.filter((item) =>
+        item.name.endsWith(value)
+    )
 }
 
 // 选择文件夹
@@ -695,7 +742,7 @@ const initEnv = async () => {
         btnDisabled.value = true
     }
     // 初始化策略
-    const policyStr = await runCommand('sysschemes', "sysschemes")
+    const policyStr = await runCommand('sysschemes', 'sysschemes')
     if (policyStr) {
         console.log('获取策略成功')
         try {
