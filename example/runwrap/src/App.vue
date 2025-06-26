@@ -778,14 +778,17 @@ const initEnv = async () => {
     inputDir.value && readDir(inputDir.value)
 }
 
+
 onMounted(async () => {
     console.log('mounted------', inputDir.value, outputDir.value)
     // 加载本地环境并初始化多语言
     await initLang()
     // 检查rockcamrun程序并初始化
     await initEnv()
-    // 禁用右键
+    // 禁用右键菜单
     !import.meta.env.DEV && disableRightClick()
+    // 开启debug
+    // var _ = new window.VConsole()
 })
 </script>
 
