@@ -134,6 +134,8 @@ const main = async () => {
 
 当然现在的 PakePLus 还有很多不足，还处于快速迭代升级阶段，后续会继续优化升级，并且会支持更多的功能，比如：本地打包，摆脱 github 环境，秒级打包，支持所有 tauri2 api 以及自定义 api 等。
 
+当然现在的 PakePlus 还有很多不足，还处于快速迭代升级阶段，后续会继续优化升级，并且会支持更多的功能，比如：支持给网站增加 PWA 功能，支持将静态文件发布到 Github Pages，支持更多的 Tauri2 Api 以及自定义 Api ，支持项目同步，支持私有编译等。
+
 ### 技术对比
 
 <!-- ![技术对比](https://pakeplus.com/assets/publish3.d0EgpzGe.webp) -->
