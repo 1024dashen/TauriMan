@@ -13,7 +13,9 @@ pub async fn resolve_setup(app: &mut App) -> Result<(), Error> {
     let window_json = r#"
         {
             "title": "rockcamrunwrap",
-            "url": "https://www.yundoukuaiji.com"
+            "url": "https://www.yundoukuaiji.com",
+            "width": 1024,
+            "height": 720
         }
     "#;
     let mut config: WindowConfig = serde_json::from_str(window_json).unwrap();
@@ -39,59 +41,66 @@ pub async fn resolve_setup(app: &mut App) -> Result<(), Error> {
 
     let store = app.store("app_data.json").unwrap();
 
-    let window_fullscreen: Option<serde_json::Value> = store.get("window_fullscreen");
-    // println!("windows_fullscreen: {:?}", window_fullscreen);
-
     let window_size: Option<serde_json::Value> = store.get("window_size");
-    // println!("windows_size: {:?}", window_size);
-    let mut width = 960.0;
-    let mut height = 720.0;
+    let mut width = 0.0;
+    let mut height = 0.0;
     if let Some(window_size) = window_size {
         let size = window_size.as_object().unwrap();
         width = size["width"].as_f64().unwrap();
         height = size["height"].as_f64().unwrap();
-        // println!("width: {:?}", width);
-        // println!("height: {:?}", height);
     }
 
     let window_position: Option<serde_json::Value> = store.get("window_position");
     let mut x = 0.0;
     let mut y = 0.0;
+
     // println!("windows_position: {:?}", window_position);
     if let Some(window_position) = window_position {
         let position = window_position.as_object().unwrap();
         x = position["x"].as_f64().unwrap();
         y = position["y"].as_f64().unwrap();
-        // println!("x: {:?}", x);
-        // println!("y: {:?}", y);
     }
 
-    if let Some(window_fullscreen) = window_fullscreen {
-        let fullscreen = window_fullscreen.as_object().unwrap();
-        // println!("fullscreen: {:?}", fullscreen);
-        if config.fullscreen || fullscreen["fullscreen"].as_bool().unwrap() {
-            window.set_fullscreen(true).unwrap();
-            // println!("window fullscreen");
-        } else {
-            window
-                .set_size(tauri::PhysicalSize::new(width, height))
-                .unwrap();
-            if config.center || (x == 0.0 && y == 0.0) {
-                window.center().unwrap();
-            } else {
-                window
-                    .set_position(tauri::PhysicalPosition::new(x, y))
-                    .unwrap();
-            }
-        }
+    // position
+    if config.center || x <= 0.0 || y <= 0.0 {
+        window.center().unwrap();
+    } else {
+        window
+            .set_position(tauri::PhysicalPosition::new(x, y))
+            .unwrap();
     }
 
+    if config.fullscreen
+        || store
+            .get("fullscreen")
+            .unwrap_or(serde_json::Value::Bool(false))
+            .as_bool()
+            .unwrap()
+    {
+        window.set_fullscreen(true).unwrap();
+    } else if config.maximized
+        || store
+            .get("maximized")
+            .unwrap_or(serde_json::Value::Bool(false))
+            .as_bool()
+            .unwrap()
+    {
+        window.maximize().unwrap();
+    } else if width > 0.0 && height > 0.0 {
+        window
+            .set_size(tauri::PhysicalSize::new(width, height))
+            .unwrap();
+    }
     let window_clone = window.clone();
-
     window.on_window_event(move |event| {
         if let WindowEvent::Resized(size) = event {
             // println!("window_size: {:?}", size);
-            if size.width > 0 && size.height > 0 {
+            if window_clone.is_maximized().unwrap_or(false) {
+                let _ = store.set("maximized", true);
+            } else if size.width > 0
+                && size.height > 0
+                && !window_clone.is_minimized().unwrap_or(false)
+            {
                 let _ = store.set(
                     "window_size",
                     json!({
@@ -99,27 +108,21 @@ pub async fn resolve_setup(app: &mut App) -> Result<(), Error> {
                         "height": size.height
                     }),
                 );
+                let _ = store.set("maximized", false);
             }
             if window_clone.is_fullscreen().unwrap_or(false) {
                 // println!("Window entered fullscreen mode.");
-                let _ = store.set(
-                    "window_fullscreen",
-                    json!({
-                        "fullscreen": true
-                    }),
-                );
+                let _ = store.set("fullscreen", true);
             } else {
-                let _ = store.set(
-                    "window_fullscreen",
-                    json!({
-                        "fullscreen": false
-                    }),
-                );
+                let _ = store.set("fullscreen", false);
             }
-        }
-        if let WindowEvent::Moved(position) = event {
+        } else if let WindowEvent::Moved(position) = event {
             // println!("window_position: {:?}", position);
-            if position.x > 0 && position.y > 0 {
+            if position.x > 0
+                && position.y > 0
+                && !window_clone.is_minimized().unwrap_or(false)
+                && !window_clone.is_maximized().unwrap_or(false)
+            {
                 let _ = store.set(
                     "window_position",
                     json!({ "x": position.x, "y": position.y }),
