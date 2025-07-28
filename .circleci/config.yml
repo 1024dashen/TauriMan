@@ -1,0 +1,19 @@
+version: 2.1
+
+jobs:
+    build_and_test:
+        docker:
+            - image: cimg/rust:latest # 使用 CircleCI 提供的 Rust 镜像
+        steps:
+            - checkout
+            - run: rustup update
+            - run: rustc --version
+            - run: cargo --version
+            - run: cargo build --verbose
+            - run: cargo test --verbose
+
+workflows:
+    version: 2
+    build_test:
+        jobs:
+            - build_and_test
