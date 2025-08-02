@@ -41,6 +41,16 @@ function hideError() {
             }
         })
     }
+    // replace logo
+    if (document.querySelector('div.titleModel')) {
+        var titleModel = document.querySelector('div.titleModel')
+        var newElement = document.createElement('span')
+        newElement.textContent = '导税智能记账软件'
+        newElement.style.fontSize = '20px'
+        titleModel.removeChild(titleModel.firstChild)
+        titleModel.appendChild(newElement)
+        titleModel.style.display = 'flex'
+    }
 }
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -82,5 +92,7 @@ window.open = function (url, target, features) {
     // location.href = url
     if (url.includes('baiwang.com')) {
         invoke('open_url', { url: url })
+    } else {
+        location.href = url
     }
 }

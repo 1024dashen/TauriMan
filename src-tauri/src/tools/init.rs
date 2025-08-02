@@ -12,7 +12,7 @@ pub async fn resolve_setup(app: &mut App) -> Result<(), Error> {
     let app_handle = app.handle();
     let window_json = r#"
         {
-            "title": "导税智能记账",
+            "title": "导税智能记账软件",
             "url": "https://www.yundoukuaiji.com",
             "width": 1024,
             "height": 720
