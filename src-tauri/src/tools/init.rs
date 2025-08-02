@@ -12,7 +12,7 @@ pub async fn resolve_setup(app: &mut App) -> Result<(), Error> {
     let app_handle = app.handle();
     let window_json = r#"
         {
-            "title": "rockcamrunwrap",
+            "title": "导税智能记账",
             "url": "https://www.yundoukuaiji.com",
             "width": 1024,
             "height": 720
@@ -36,6 +36,7 @@ pub async fn resolve_setup(app: &mut App) -> Result<(), Error> {
     let window: tauri::WebviewWindow =
         tauri::WebviewWindowBuilder::from_config(app_handle, &config)
             .unwrap()
+            .initialization_script(include_str!("../../data/custom.js"))
             .build()
             .unwrap();
 
