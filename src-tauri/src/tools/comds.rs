@@ -226,3 +226,8 @@ pub fn get_man() -> String {
     let man = load_man(&get_exe_dir()).unwrap();
     man
 }
+
+#[tauri::command]
+pub async fn open_url(_: tauri::AppHandle, url: String) {
+    open::that(url).unwrap();
+}
