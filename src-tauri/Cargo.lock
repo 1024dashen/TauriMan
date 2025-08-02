@@ -4070,6 +4070,7 @@ version = "0.1.1"
 dependencies = [
  "encoding_rs",
  "machine-uid",
+ "open",
  "serde",
  "serde_json",
  "tauri",

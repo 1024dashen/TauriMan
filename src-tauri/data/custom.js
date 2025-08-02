@@ -1,9 +1,12 @@
-console.log('custom.js')
+const { invoke } = window.__TAURI__.core
 
 function hideError() {
     // 隐藏logo
-    if (document.querySelector('.ydLogo')) {
-        document.querySelector('.ydLogo').style.display = 'none'
+    if (document.querySelector('div.ydLogo')) {
+        document.querySelector('div.ydLogo').style.display = 'none'
+    }
+    if (document.querySelector('div.logo')) {
+        document.querySelector('div.logo').style.display = 'none'
     }
     // 隐藏barEntrance
     if (document.querySelector('.barEntrance')) {
@@ -73,3 +76,11 @@ const hookClick = (e) => {
 }
 
 document.addEventListener('click', hookClick, { capture: true })
+
+window.open = function (url, target, features) {
+    console.log('open', url, target, features)
+    // location.href = url
+    if (url.includes('baiwang.com')) {
+        invoke('open_url', { url: url })
+    }
+}
