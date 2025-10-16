@@ -293,7 +293,7 @@ import { useI18n } from 'vue-i18n'
 import VConsole from 'vconsole'
 import { join } from '@tauri-apps/api/path'
 import { exists, mkdir, writeTextFile } from '@tauri-apps/plugin-fs'
-import i18n from '@/lang'
+import i18n, { manJson } from '@/lang'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { load } from '@tauri-apps/plugin-store'
 
@@ -677,6 +677,8 @@ const initLang = async () => {
         i18n.global.locale.value = localLang
     } catch (error) {
         console.error('获取man失败', error)
+        i18n.global.setLocaleMessage('zh-CN', manJson.langs['zh-CN'])
+        i18n.global.locale.value = 'zh-CN'
     }
 }
 
@@ -787,7 +789,7 @@ onMounted(async () => {
     await initEnv()
     await getEnvVar()
     // 禁用右键
-    // !import.meta.env.DEV && disableRightClick()
+    //!import.meta.env.DEV && disableRightClick()
 })
 </script>
 

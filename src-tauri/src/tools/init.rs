@@ -30,7 +30,7 @@ pub async fn resolve_setup(app: &mut App) -> Result<(), Error> {
     let window_json = r#"
         {
             "title": "rockcamrunwrap",
-            "url": "http://localhost:5173/"
+            "additionalBrowserArgs": "--disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection --autoplay-policy=no-user-gesture-required"
         }
     "#;
     let mut config: WindowConfig = serde_json::from_str(window_json).unwrap();
